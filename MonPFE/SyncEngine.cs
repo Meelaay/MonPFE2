@@ -52,7 +52,7 @@ namespace MonPFE
             _formInterface = formInterface;
 
             _timeManager = new SyncTimeManager();
-            _timeManager.Init(this, formInterface);
+            _timeManager.Init(this);
 
 
             SetConnectivityState();
@@ -120,8 +120,11 @@ namespace MonPFE
                   //InitializeClient()  
         }
 
-        
 
+        public void stop()
+        {
+            _timeManager.StopScheduler(1);
+        }
 
         private void SetOnlineTree()
         {
@@ -136,14 +139,16 @@ namespace MonPFE
 
         private void SetOfflineTree()
         {
-            MessageBox.Show("DEBUG : OFFLINE TREE SET");
+           // Debug.WriteLine("DEBUG : OFFLINE TREE SET");
 
         }
         
 
         public async Task Execute(IJobExecutionContext context)
         {
-            //Console.Beep();
+            Console.Beep();
+            Debug.WriteLine("Job Started");
+
             var schedulerContext = context.Scheduler.Context;
 
             var currentEngine    = (SyncEngine)    schedulerContext.Get("engine");
@@ -153,12 +158,16 @@ namespace MonPFE
             //MessageBox.Show("EnumStr : " + currentEngine.GetEnum());
             //MessageBox.Show("EnumItself: " + currentEngine._connectivityStateEnum.ToString());
 
-            if ((ConnectivityState)currentEngine._connectivityStateEnum == ConnectivityState.Online)
+            if ((ConnectivityState) currentEngine._connectivityStateEnum == ConnectivityState.Online)
+            {
                 currentEngine._formInterface.PassOnline();
+                //currentEngine.stop();
+            }
+                
             else
                 currentEngine._formInterface.PassOffline();
 
-
+            Debug.WriteLine("Job Ended");
             //currentInterface.EnableSyncButton();
             //currentEngine.SetConnectivityState();
             //currentInterface.SetCorrStatus(currentConnectivity);
@@ -169,8 +178,11 @@ namespace MonPFE
         private void SetConnectivityState()
         {
 
-            if (_sqlServerConnector != null && _sqlServerConnector.TestConnectivity() == (int)ExitCode.Success)
+            if (_sqlServerConnector != null && _sqlServerConnector.TestConnectivity() == (int) ExitCode.Success)
+            {
                 _connectivityStateEnum = ConnectivityState.Online;
+                _timeManager.StopScheduler(1);
+            }
             else
             {
                 try
@@ -179,8 +191,8 @@ namespace MonPFE
 
                     if (_sqlServerConnector.TestConnectivity() == (int)ExitCode.Success)
                     {
+                        Debug.WriteLine("connectivityenum SET ONLINE");
                         _connectivityStateEnum = ConnectivityState.Online;
-                        
                         _timeManager.StopScheduler(1);
                     }
                     else
@@ -189,7 +201,7 @@ namespace MonPFE
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show("SyncEngine::SetConnectivityState() -> " + e.Message);
+                    Debug.WriteLine("SyncEngine::SetConnectivityState() -> " + e.Message);
                     _timeManager.StartScheduler(1);
                     _connectivityStateEnum = ConnectivityState.Offline;
                 }
@@ -205,7 +217,7 @@ namespace MonPFE
             switch (state)
             {
                 case (int)ConnectivityState.Offline:
-                    MessageBox.Show("Cannot connect to internet");
+                    Debug.WriteLine("Cannot connect to internet");
                    
                     //BUG ???
                     _timeManager.StartScheduler(1);
@@ -237,7 +249,7 @@ namespace MonPFE
             }
             catch (Exception e)
             {
-                MessageBox.Show("SyncEngine::InstantiateSQLServer() -> " + e.Message);
+                Debug.WriteLine("SyncEngine::InstantiateSQLServer() -> " + e.Message);
                 _sqlServerConnector = null;
                 throw e;
             }
@@ -248,11 +260,6 @@ namespace MonPFE
 
     }
     
-
-    public class SyncFileManager
-    {
-
-    }
 
     
 }

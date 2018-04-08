@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -19,7 +20,7 @@ namespace MonPFE
             }
             catch (Exception e)
             {
-                MessageBox.Show("SQLServerConnector::SQLServerConnector -> " + e.Message);
+                Debug.WriteLine("SQLServerConnector::SQLServerConnector -> " + e.Message);
                 throw;
             }
         }
@@ -42,7 +43,7 @@ namespace MonPFE
             catch (Exception e)
             {
                 //bug remove this popup at the end
-                MessageBox.Show(e.Message);
+                Debug.WriteLine(e.Message);
 
                 return (int)ExitCode.UnknownError;
             }

@@ -40,7 +40,7 @@ namespace MonPFE
 
         public async Task Execute(IJobExecutionContext context)
         {
-            Console.Beep();
+           // Console.Beep();
             //...
             //test if connection to sqlserver is available
             //if yes sync

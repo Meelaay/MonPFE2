@@ -18,7 +18,7 @@ namespace MonPFE
         private IJobDetail _jobDetail2;
         private ITrigger _trigger2;
 
-        public async void Init(SyncEngine engine, FormInterface formInterface)
+        public async void Init(SyncEngine engine)
         {
             // construct a scheduler factory
             NameValueCollection props = new NameValueCollection
@@ -46,7 +46,7 @@ namespace MonPFE
                 .WithIdentity("each2minTrigger", "group1")
                 .StartNow()
                 .WithSimpleSchedule(x => x
-                    .WithIntervalInSeconds(120)
+                    .WithIntervalInSeconds(90)
                     .RepeatForever())
                 .Build();
             /*
@@ -69,7 +69,7 @@ namespace MonPFE
 
             //_scheduler.Context.Put("connectivityState", connectivityState);
             _scheduler.Context.Put("engine", engine);
-            _scheduler.Context.Put("formInterface", formInterface);
+            //_scheduler.Context.Put("formInterface", formInterface);
 
             await _scheduler.ScheduleJob(_jobDetail, _trigger);
             await _scheduler2.ScheduleJob(_jobDetail2, _trigger2);
@@ -102,12 +102,12 @@ namespace MonPFE
                 _scheduler2.Start();
         }
 
-        public void StopScheduler(int i)
+        public  void StopScheduler(int i)
         {
             if (i == 1)
-                _scheduler.Standby();
+                _scheduler.PauseJob(_jobDetail.Key);
             else if (i == 2)
-                _scheduler2.Standby();
+                _scheduler2.PauseJob(_jobDetail2.Key);
         }
     }
 }

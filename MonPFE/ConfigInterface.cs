@@ -10,7 +10,7 @@ namespace MonPFE
     
     public class ConfigInterface
     {
-        private SyncFileManager _fileManager;
+        
 
         private List<CheckBox> _weekDaysList;
 
@@ -87,9 +87,9 @@ namespace MonPFE
             //todo think what to be initialized
         }
 
-        public void InitializeConfigInterface(SyncFileManager fileManager = null)
+        public void InitializeConfigInterface()
         {
-            _fileManager = fileManager;
+            
             //get current config from text file or sqlite db
         }
         

@@ -45,7 +45,7 @@ namespace MonPFE
             this.FormBorderStyle = FormBorderStyle.SizableToolWindow;
             this.ShowInTaskbar = false;
             */
-
+            _engine.stop();
         }
 
         private void btnAddFile_Click(object sender, EventArgs e)
@@ -55,9 +55,7 @@ namespace MonPFE
 
             //Sdfgsdfgdsfgsdffgh 
 
-            
             /*
-
                 string path = "init";
                 OpenFileDialog file = new OpenFileDialog();
                 if (file.ShowDialog() == DialogResult.OK)

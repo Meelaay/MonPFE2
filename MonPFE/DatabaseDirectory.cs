@@ -35,6 +35,9 @@ namespace MonPFE
         {
             SqlServerConnector = 
                 new SQLServerConnector(@"Data Source=DESKTOP-DJONOS6\SQLEXPRESS;Initial Catalog=PFE;Integrated Security=True;Connection Timeout = 5");
+
+            SqlLiteConnector = 
+                new SQLiteConnector(@"Data source = ..\..\localSqlite\localDatabase.db;Version=3;");
         }
         
 

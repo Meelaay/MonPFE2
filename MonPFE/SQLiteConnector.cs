@@ -86,6 +86,7 @@ namespace MonPFE
 
                     using (SQLiteDataReader dr = command.ExecuteReader())
                     {
+                        
                         using (destSqlConnection)
                         {
                             using (SqlBulkCopy bc = new SqlBulkCopy(destSqlConnection))
@@ -93,6 +94,7 @@ namespace MonPFE
                                 bc.DestinationTableName = "onlineTable";
                                 destSqlConnection.Open();
                                 bc.WriteToServer(dr);
+                                
                                 destSqlConnection.Close();
                             }
                         }
