@@ -51,6 +51,12 @@ namespace MonPFE
                 _timeManager.RescheduleFromCronExpr("0/2 0/1 * 1/1 * ? *");
             */
         }
+        
+        private void SetCorrespondantJobDependingOnClientState(bool a)
+        {
+
+        }
+
 
         public void InitializeEngine(FormInterface formInterface)
         {
@@ -61,94 +67,51 @@ namespace MonPFE
             _timeManager = new SyncTimeManager();
             _timeManager.Init(this);
 
-
             SetConnectivityState();
+            DatabaseDirectory.SetConnectors(_sqlServerConnector, _sqLiteConnector);
+
+
             _formInterface.SetCorrStatus((ConnectivityState)_connectivityStateEnum);
 
-            DatabaseDirectory.SetConnectors(_sqlServerConnector, _sqLiteConnector);
+            _client = new Client(_sqlServerConnector, _sqLiteConnector, _connectivityStateEnum);
+
+            if ((ConnectivityState)_connectivityStateEnum == ConnectivityState.Offline)
+            {
+                if (_client.IsSet)
+                {
+                    //start last set schedule by client (cronExpr from sqlite)
+                    //set interface of cronExpression
+                }
+                else
+                {
+                    //no sync for him
+                }
+
+
+                //disable interface
+            }
+            else
+            {
+                //Load online tree
+                //launch job from cronExpr
+                //Enable formInterface for change of cronEpxr
+            }
+            
+
+
+
+
 
             if ((ConnectivityState)_connectivityStateEnum == ConnectivityState.Online)
                 SetOnlineTree();
             else if ((ConnectivityState)_connectivityStateEnum == ConnectivityState.Offline)
                 SetOfflineTree();
+            
 
-            /** 
-             * before initializing root directory we should see 
-             * status of connection
-             * case 1 : connected
-             *      initialize root from sqlserver
-             *
-             * case 2 : not connected
-             *      initialize root from sqlite
-             *
-             *
-             * schedules ??
-             */
-
-            //init rootDirectory
             
         }
 
-        private void TreatFirstTimeClient(bool isOnline)
-        {
-            if (isOnline)
-            {
-
-                return;   
-            }
-
-        }
-
-        private void InitializeClient()
-        {
-            _client = new Client(_sqLiteConnector);
-
-            if ((ConnectivityState) _connectivityStateEnum == ConnectivityState.Offline)
-            {
-                //load offline tree
-
-                //new client
-
-                //old Client
-                    //last set schedule by client 
-
-                //disable interface
-
-            }
-            else
-            {
-                //new client
-
-                //old client
-            }
-
-
-
-            //check if status is connected
-                //connected :
-                    //
-
-                //not connected :
-                    //
-
-
-
-            //check if client has an existing id in sqlite
-
-            //yes : check if client has already set a schedule 
-                //already set :
-                    //change status of form interface depending on 
-                    //already set cronExpr
-                    //start the schedule ?
-                //not yet set :
-                    //give a default cron thats different 
-                    //than already existing crons 
-                    //start the schedule ?
-            
-            //no  : connect to sqlserver and insert new client_id + 1
-                  //get max id and store it in sqlite
-                  //InitializeClient()  
-        }
+        
 
 
         public void stop()

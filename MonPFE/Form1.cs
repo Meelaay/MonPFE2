@@ -15,6 +15,9 @@ namespace MonPFE
         private SyncEngine _engine;
         private ConfigMenu _configMenu;
 
+
+        //todo override what close button does so it keeps app running in bg
+        //=====================================================================
         private const int CP_NOCLOSE_BUTTON = 0x200;
         protected override CreateParams CreateParams
         {
@@ -25,6 +28,8 @@ namespace MonPFE
                 return myCp;
             }
         }
+        //=====================================================================
+
 
         public Form1()
         {
@@ -76,6 +81,9 @@ namespace MonPFE
             _configMenu.Activate();
         }
 
-       
+        private void btnSync_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

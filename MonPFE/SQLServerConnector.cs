@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
@@ -53,6 +54,28 @@ namespace MonPFE
         {
             //get max number in table +1
             return 0;
+        }
+
+        public string GetValidCronExpr()
+        {
+            //var row1 = select * from schedules where id = 1 ?"prob"
+            //string row1.cronExpr. +5
+
+            //if IsCronExprValid() return 
+            //
+            return null;
+        }
+
+        public bool IsCronExprValid(string cronExpr)
+        {
+            //add 2 new columns hour and minutes
+            //int a = select count(*) where hour = cronExpr... and min = cron...
+            //if a != 0
+            //return false
+            //if a == 0 return true
+            //throw exception
+            return false;
+            
         }
 
         public string GetClientPublicIP()

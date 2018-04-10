@@ -93,6 +93,7 @@
             this.btnSync.TabIndex = 3;
             this.btnSync.Text = "Sync";
             this.btnSync.UseVisualStyleBackColor = true;
+            this.btnSync.Click += new System.EventHandler(this.btnSync_Click);
             // 
             // btnAddFolder
             // 
