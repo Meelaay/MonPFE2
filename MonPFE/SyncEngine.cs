@@ -25,11 +25,18 @@ namespace MonPFE
 
         private FormInterface _formInterface;
 
+        private Client _client;
         private DatabaseDirectory _rootDirectory;
+
         private int times = 0;
 
         public void test()
         {
+            //
+            string userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+            MessageBox.Show(userName);
+
+            /*
             times++;
             if (times == 1)
                 _timeManager.StartScheduler(2);
@@ -42,7 +49,7 @@ namespace MonPFE
 
             if (times == 4)
                 _timeManager.RescheduleFromCronExpr("0/2 0/1 * 1/1 * ? *");
-
+            */
         }
 
         public void InitializeEngine(FormInterface formInterface)
@@ -94,6 +101,29 @@ namespace MonPFE
 
         private void InitializeClient()
         {
+            _client = new Client(_sqLiteConnector);
+
+            if ((ConnectivityState) _connectivityStateEnum == ConnectivityState.Offline)
+            {
+                //load offline tree
+
+                //new client
+
+                //old Client
+                    //last set schedule by client 
+
+                //disable interface
+
+            }
+            else
+            {
+                //new client
+
+                //old client
+            }
+
+
+
             //check if status is connected
                 //connected :
                     //
@@ -225,7 +255,7 @@ namespace MonPFE
                     break;
 
                 case (int)ConnectivityState.Online:
-                    bool? a = _sqLiteConnector.IsNotEmpty();
+                    bool? a = _sqLiteConnector.IsNotEmpty(null);
 
                     if (a == true)
                     {

@@ -46,7 +46,7 @@ namespace MonPFE
                 .WithIdentity("each2minTrigger", "group1")
                 .StartNow()
                 .WithSimpleSchedule(x => x
-                    .WithIntervalInSeconds(90)
+                    .WithIntervalInSeconds(120)
                     .RepeatForever())
                 .Build();
             /*

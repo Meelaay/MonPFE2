@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace MonPFE
@@ -13,6 +14,11 @@ namespace MonPFE
         public SQLiteConnector(string connectionString) : base(connectionString)
         {
             _connection = new SQLiteConnection(base._connectionString);
+        }
+
+        public bool CheckIfFirstTimeClient()
+        {
+            return true;
         }
 
         public override int ExecuteInsertQuery(string query)
@@ -49,11 +55,11 @@ namespace MonPFE
 
         }
 
-        //make isempty aproperty and use logic in get
-        public bool? IsNotEmpty()
+        public bool? IsNotEmpty(string tableName)
         {
             int rowsCount;
-            using (var command = new SQLiteCommand("SELECT COUNT(*) FROM localTable", _connection))
+            string query = String.Format("SELECT COUNT(*) FROM {0}", tableName);
+            using (var command = new SQLiteCommand(query, _connection))
             {
                 try
                 {
@@ -63,7 +69,7 @@ namespace MonPFE
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show(e.Message);
+                    Debug.WriteLine(e.Message);
                     rowsCount = -1;
                     return null;
                 }
@@ -93,6 +99,7 @@ namespace MonPFE
                             {
                                 bc.DestinationTableName = "onlineTable";
                                 destSqlConnection.Open();
+                                //look at execute select query
                                 bc.WriteToServer(dr);
                                 
                                 destSqlConnection.Close();
