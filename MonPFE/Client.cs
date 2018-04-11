@@ -24,6 +24,14 @@ namespace MonPFE
 
         private string _cronExpression;
 
+        public string GetCron()
+        {
+            return _cronExpression;
+        }
+
+        private int _hour;
+        private int _minute;
+
 //        public string CronExpression
 //        {
 //            get { return this._cronExpression; }
@@ -43,7 +51,9 @@ namespace MonPFE
                 _isOnline = false;
             else _isOnline = true;
 
-            bool? firstTimeClient = sqLiteConnector.IsNotEmpty(tableName: "Client");
+            //bool? firstTimeClient = sqLiteConnector.IsNotEmpty(tableName: "Client");
+
+            bool firstTimeClient = false;
 
             if (_isOnline)
             {
@@ -62,12 +72,9 @@ namespace MonPFE
                 }
                 else if (firstTimeClient == false)
                 {
-                    var clientRow = sqLiteConnector.ExecuteSelectQuery("SELECT * FROM Client").Rows[0];
-                    
-                    _clientID = Convert.ToInt32(clientRow["..."]);
-                    _clientName = clientRow["..."].ToString();
-                    //...
-                    //update IPs if they're different write them to sqlite and server?
+                    //laaater : update IPs if they're different write them to sqlite and server?
+
+                    SetClientFromSqlite(sqLiteConnector);
 
                 }
 
@@ -89,16 +96,31 @@ namespace MonPFE
                 else
                 {
                     //instantiante from sqlite
-
+                    SetClientFromSqlite(sqLiteConnector);
+                    IsSet = true;
                 }
                 
             }
 
         }
 
-        public void SetClientState()
+        private void SetNewClientFromSqlServer() { }
+
+        private void SetClientFromSqlite(SQLiteConnector sqLiteConnector)
         {
-            //
+            var clientRow = sqLiteConnector.ExecuteSelectQuery("SELECT * FROM Client").Rows[0];
+
+            this._clientID = Convert.ToInt32(clientRow["id_client"]);
+            this._clientName = clientRow["host_name"].ToString();
+
+            //int id_schedule = Convert.ToInt32(clientRow["id_schedule"]);
+
+            var scheduleRow = sqLiteConnector.ExecuteSelectQuery("SELECT * FROM Schedule").Rows[0];
+
+            this._cronExpression = scheduleRow["cron_expr"].ToString();
+            this._hour = Convert.ToInt32(scheduleRow["hour"]);
+            this._minute = Convert.ToInt32(scheduleRow["minute"]);
+
         }
 
         public string GetClientPublicIP()

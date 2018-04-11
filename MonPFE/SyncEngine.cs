@@ -19,7 +19,7 @@ namespace MonPFE
         private SQLiteConnector _sqLiteConnector;
         private SQLServerConnector _sqlServerConnector;
 
-        private SyncTimeManager _timeManager;
+        //bug private SyncTimeManager _timeManager;
 
         private Enum _connectivityStateEnum;
 
@@ -64,8 +64,14 @@ namespace MonPFE
             _sqLiteConnector = new SQLiteConnector(_sqLiteConnString);
             _formInterface = formInterface;
 
-            _timeManager = new SyncTimeManager();
-            _timeManager.Init(this);
+
+
+            //bug _timeManager = new SyncTimeManager();
+            //bug _timeManager.Init(this);
+
+
+
+
 
             SetConnectivityState();
             DatabaseDirectory.SetConnectors(_sqlServerConnector, _sqLiteConnector);
@@ -80,7 +86,12 @@ namespace MonPFE
                 if (_client.IsSet)
                 {
                     //start last set schedule by client (cronExpr from sqlite)
-                    //set interface of cronExpression
+                    string cronExpr = _client.GetCron();
+                    //bug  _timeManager.RescheduleFromCronExpr(cronExpr);
+                    //bug  _timeManager.StartScheduler(2);
+
+                    //set interface depending on cronExpression
+                    _formInterface.SetConfigInterfaceCron(cronExpr);
                 }
                 else
                 {
@@ -88,15 +99,51 @@ namespace MonPFE
                 }
 
 
-                //disable interface
+                //disables interface for changing jobs
+                formInterface.EnableDisableConfigInterface(false);
+
+                //todo code for tree:
+                SetOfflineTree();
+
+
+                //throw new Exception("not yet configured");
+
             }
-            else
+            else if ((ConnectivityState)_connectivityStateEnum == ConnectivityState.Online)
             {
-                //Load online tree
                 //launch job from cronExpr
+                string cronExpr = _client.GetCron();
+                //bug  _timeManager.RescheduleFromCronExpr(cronExpr);
+                //bug  _timeManager.StartScheduler(2);
+
                 //Enable formInterface for change of cronEpxr
+                formInterface.EnableDisableConfigInterface(IsEnabled: true);
+
+                //todo code to load tree
+                _sqLiteConnector.
+
+
+                /*
+                 * bool isSyncFull = check if sqlite syncTable is full
+                 *
+                 * isSyncFull = true  :
+                 *      formInterface->disable sqlserver tree
+                 *      formInterface->enable  sqlite tree
+                 *      
+                 *      load tree from backup table
+                 *      
+                 *      bug prompt to sync and lock database if accepted to sync ??
+                 *      
+                 * isSyncFull = false :
+                 *      forminterface->disable sqlite tree and enable sqlserver's
+                 *      instantiate directory from sqlserver
+                 *              
+                 */
+
+
             }
-            
+
+
 
 
 
@@ -116,7 +163,7 @@ namespace MonPFE
 
         public void stop()
         {
-            _timeManager.StopScheduler(1);
+            //bug  _timeManager.StopScheduler(1);
         }
 
         private void SetOnlineTree()
@@ -124,16 +171,23 @@ namespace MonPFE
             _rootDirectory = new DatabaseDirectory();
 
             _rootDirectory = _rootDirectory.CreateNode(
-                _sqlServerConnector.ExecuteSelectQuery("select * from Folders where id_folder = 0").Rows[0]
+                _sqlServerConnector.ExecuteSelectQuery("select * from Folders where id_folder = 0").Rows[0],
+                _sqlServerConnector
             );
-
-            _formInterface.DrawTree(_rootDirectory);
+            
+            _formInterface.DrawTree(_rootDirectory, isOnline: true);
         }
 
         private void SetOfflineTree()
         {
-           // Debug.WriteLine("DEBUG : OFFLINE TREE SET");
+            _rootDirectory = new DatabaseDirectory();
 
+            _rootDirectory = _rootDirectory.CreateNode(
+                _sqLiteConnector.ExecuteSelectQuery("select * from Folders where id_folder = 0").Rows[0],
+                _sqLiteConnector
+            );
+
+            _formInterface.DrawTree(_rootDirectory, isOnline: false);
         }
         
 
@@ -174,7 +228,7 @@ namespace MonPFE
             if (_sqlServerConnector != null && _sqlServerConnector.TestConnectivity() == (int) ExitCode.Success)
             {
                 _connectivityStateEnum = ConnectivityState.Online;
-                _timeManager.StopScheduler(1);
+                //bug  _timeManager.StopScheduler(1);
             }
             else
             {
@@ -186,7 +240,7 @@ namespace MonPFE
                     {
                         Debug.WriteLine("connectivityenum SET ONLINE");
                         _connectivityStateEnum = ConnectivityState.Online;
-                        _timeManager.StopScheduler(1);
+                        //bug  _timeManager.StopScheduler(1);
                     }
                     else
                         throw new Exception("Cannot connect to sqlserver.");
@@ -195,7 +249,7 @@ namespace MonPFE
                 catch (Exception e)
                 {
                     Debug.WriteLine("SyncEngine::SetConnectivityState() -> " + e.Message);
-                    _timeManager.StartScheduler(1);
+                    //bug  _timeManager.StartScheduler(1);
                     _connectivityStateEnum = ConnectivityState.Offline;
                 }
             }
@@ -211,9 +265,9 @@ namespace MonPFE
             {
                 case (int)ConnectivityState.Offline:
                     Debug.WriteLine("Cannot connect to internet");
-                   
-                    //BUG ???
-                    _timeManager.StartScheduler(1);
+
+                    
+                    //bug  _timeManager.StartScheduler(1);
 
                     break;
 
@@ -225,9 +279,9 @@ namespace MonPFE
                         //BUG careful of GetConnection() dispose prblm
                         _sqLiteConnector.ImportFromSqliteToSqlServer(_sqlServerConnector.GetConnection());
                         this._sqLiteConnector.PurgeTable();
-                        
+
                         //BUG ???
-                        _timeManager.StopScheduler(1);
+                        //bug     _timeManager.StopScheduler(1);
                     }
 
                     break;

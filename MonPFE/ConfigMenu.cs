@@ -24,7 +24,7 @@ namespace MonPFE
 
             //todo add check connection every 2 3 5 min ?
 
-            ConfigInterface configInter = new ConfigInterface();
+            //ConfigInterface configInter = new ConfigInterface();
 
         }
 

@@ -10,16 +10,25 @@ namespace MonPFE
     
     public class ConfigInterface
     {
-        
-
         private List<CheckBox> _weekDaysList;
 
         private DateTimePicker _startsAt;
 
-        //private Button _okButton;
-        //private Button _cancelButton;
+        private Button _okButton;
 
-        public void CronToInterface(string cronExpr)
+        public void SetControlsState(bool IsEnabled)
+        {
+            foreach (var checkBox in _weekDaysList)
+                checkBox.Enabled = IsEnabled;
+
+            _startsAt.Enabled = IsEnabled;
+
+            _okButton.Enabled = IsEnabled;
+        }
+
+        
+
+        public void CronToInterface(string cronExpression)
         {
             List<string> weekDays = new List<string>(capacity:7);
 
@@ -82,9 +91,14 @@ namespace MonPFE
         }
 
 
-        public ConfigInterface()
+        public ConfigInterface(DateTimePicker picker, Button okButton, params CheckBox[] weekdayChBox)
         {
-            //todo think what to be initialized
+            _startsAt = picker;
+            _okButton = okButton;
+
+            foreach (var checkBox in weekdayChBox)
+                _weekDaysList.Add(checkBox);
+
         }
 
         public void InitializeConfigInterface()
@@ -92,6 +106,7 @@ namespace MonPFE
             
             //get current config from text file or sqlite db
         }
+
         
     }
 }

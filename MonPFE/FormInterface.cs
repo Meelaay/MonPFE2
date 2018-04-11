@@ -15,7 +15,7 @@ namespace MonPFE
         
 
         private PictureBox _statusIndicator;
-        private TreeView _localTree;
+        private TreeView _offlineTree;
         private TreeView _onlineTree;
         public Button _syncButton;
 
@@ -28,7 +28,7 @@ namespace MonPFE
         public void InitiatlizeFormInterface(PictureBox statusIndicator, TreeView onlineTree, TreeView localTree, Button syncButton, ConfigInterface configInterface)
         {
             _statusIndicator = statusIndicator;
-            _localTree = localTree;
+            _offlineTree = localTree;
             _onlineTree = onlineTree;
             _syncButton = syncButton;
             _configInterface = configInterface;
@@ -36,7 +36,16 @@ namespace MonPFE
             SetLight();
         }
 
-        
+        public void SetOnlineTree(bool isEnabled)
+        {
+            _onlineTree.Enabled = isEnabled;
+        }
+
+        public void SetOfflineTree(bool isEnabled)
+        {
+            _offlineTree.Enabled = isEnabled;
+        }
+
 
         public async Task Execute(IJobExecutionContext context)
         {
@@ -50,12 +59,19 @@ namespace MonPFE
         }
 
 
-        public void DrawTree(DatabaseDirectory root)
+        public void DrawTree(DatabaseDirectory root, bool isOnline)
         {
             //get root node
-            _onlineTree.Nodes.Clear();
-            
-            _onlineTree.Nodes.Add(CreateNode(root));
+            if (isOnline)
+            {
+                _onlineTree.Nodes.Clear();
+                _onlineTree.Nodes.Add(CreateNode(root));
+            }
+            else
+            {
+                _offlineTree.Nodes.Clear();
+                _offlineTree.Nodes.Add(CreateNode(root));
+            }            
 
         }
 
@@ -102,6 +118,16 @@ namespace MonPFE
             }
 
 
+        }
+
+        public void EnableDisableConfigInterface(bool IsEnabled)
+        {
+            _configInterface.SetControlsState(IsEnabled: IsEnabled);
+        }
+
+        public void SetConfigInterfaceCron(string cronExpression)
+        {
+            _configInterface.CronToInterface(cronExpression);
         }
 
         public void PassOnline()
@@ -165,6 +191,7 @@ namespace MonPFE
             var rootDirectoryInfo = new DirectoryInfo(path);
             treeView.Nodes.Add(CreateDirectoryNode(rootDirectoryInfo));
         }
+
 
         
     }

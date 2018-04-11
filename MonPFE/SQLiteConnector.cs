@@ -81,7 +81,34 @@ namespace MonPFE
 
             return null;
         }
+        /*
+        public int tobenamed(string tableName)
+        {
+            int rowsCount;
+            string query = String.Format("SELECT COUNT(*) FROM {0}", tableName);
+            using (var command = new SQLiteCommand(query, _connection))
+            {
+                try
+                {
+                    command.Connection.Open();
+                    rowsCount = Convert.ToInt32(command.ExecuteScalar().ToString());
+                    command.Connection.Close();
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e.Message);
+                    rowsCount = -1;
+                    return null;
+                }
+            }
+            if (rowsCount > 0)
+                return true;
+            if (rowsCount == 0)
+                return false;
 
+            return null;
+        }
+        */
         public void ImportFromSqliteToSqlServer(SqlConnection destSqlConnection)
         {
             using (var command = new SQLiteCommand("SELECT * FROM localTable", _connection))

@@ -41,7 +41,7 @@ namespace MonPFE
         }
         
 
-        public DatabaseDirectory CreateNode(DataRow nodeRow)
+        public DatabaseDirectory CreateNode(DataRow nodeRow, Connector connector)
         {
             var dirNode = new DatabaseDirectory(
                 Convert.ToInt32(nodeRow["id_folder"]),
@@ -49,15 +49,15 @@ namespace MonPFE
                 Convert.ToInt32(nodeRow["parent_folder"])
             );
 
-            var childFoldersDataTable = SqlServerConnector.ExecuteSelectQuery(
+            var childFoldersDataTable = connector.ExecuteSelectQuery(
                 string.Format("select * from Folders where parent_folder = {0}", nodeRow["id_folder"])
             );
-            var childFilesDataTable = SqlServerConnector.ExecuteSelectQuery(
+            var childFilesDataTable = connector.ExecuteSelectQuery(
                 string.Format("select * from Files where parent_folder = {0}", nodeRow["id_folder"])
             );
 
             foreach (DataRow row in childFoldersDataTable.Rows)
-                dirNode.FoldersList.Add(CreateNode(row));
+                dirNode.FoldersList.Add(CreateNode(row, connector));
 
             foreach (DataRow row in childFilesDataTable.Rows)
                 dirNode.FilesList.Add(DatabaseDirectory.AddFile(row));
