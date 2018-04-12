@@ -57,6 +57,72 @@ namespace MonPFE
 
         }
 
+        public void AddFolder(string name, DatabaseDirectory parentDirectory)
+        {
+            //check if folder name already exists within same parent folder
+            string countQuery = string.Format(
+                "select count(*) from Folders where name_folder = '{0}' and parent_folder = {1}",
+                name,
+                parentDirectory.id_folder
+            );
+
+            
+
+            if ((ConnectivityState)_connectivityStateEnum == ConnectivityState.Offline)
+            {
+                int a = _sqLiteConnector.ExecuteScalarQuery(countQuery);
+
+                if (a != 0)
+                    name = name + " (2)";
+
+                string insertOfflineQuery = String.Format(
+                    "insert into Folders (name_folder, parent_folder, created_by_client, is_synced) values('{0}', {1}, {2}, {3})",
+                    name,
+                    parentDirectory.id_folder,
+                    _client._clientID,
+                    0
+                    );
+                _sqLiteConnector.ExecuteInsertQuery(insertOfflineQuery);
+
+                SetOfflineTree();
+
+            }else if ((ConnectivityState) _connectivityStateEnum == ConnectivityState.Online)
+            {
+                int a = _sqlServerConnector.ExecuteScalarQuery(countQuery);
+
+                if (a != 0)
+                    name = name + " (2)";
+
+                string insertOnlineQuery = String.Format(
+                    "insert into Folders (name_folder, parent_folder, created_by_client) values('{0}', {1}, {2})",
+                    name,
+                    parentDirectory.id_folder,
+                    _client._clientID
+                );
+
+                _sqlServerConnector.ExecuteInsertQuery(insertOnlineQuery);
+
+                string insertOfflineQuery = String.Format(
+                    "insert into Folders (name_folder, parent_folder, created_by_client, is_synced) values('{0}', {1}, {2}, {3})",
+                    name,
+                    parentDirectory.id_folder,
+                    _client._clientID,
+                    1
+                );
+                _sqLiteConnector.ExecuteInsertQuery(insertOfflineQuery);
+
+                SetOnlineTree();
+            }
+            _formInterface.ExpandTrees();
+
+        }
+
+        public void AddFolder(string name, DatabaseFile sameLevelFile)
+        {
+
+        }
+
+
 
         public void InitializeEngine(FormInterface formInterface)
         {
@@ -166,7 +232,7 @@ namespace MonPFE
             _rootDirectory = new DatabaseDirectory(clientID: _client._clientID);
 
             _rootDirectory = _rootDirectory.CreateNode(
-                _sqlServerConnector.ExecuteSelectQuery("select * from Folders where id_folder = 0").Rows[0],
+                _sqlServerConnector.ExecuteSelectQuery("select * from Folders where id_folder = 1").Rows[0],
                 _sqlServerConnector
             );
             
@@ -178,7 +244,7 @@ namespace MonPFE
             _rootDirectory = new DatabaseDirectory(clientID: _client._clientID);
 
             _rootDirectory = _rootDirectory.CreateNode(
-                _sqLiteConnector.ExecuteSelectQuery("select * from Folders where id_folder = 0").Rows[0],
+                _sqLiteConnector.ExecuteSelectQuery("select * from Folders where id_folder = 1").Rows[0],
                 _sqLiteConnector
             );
 

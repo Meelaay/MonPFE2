@@ -46,6 +46,11 @@ namespace MonPFE
             _offlineTree.Enabled = isEnabled;
         }
 
+        public void ExpandTrees()
+        {
+            _offlineTree.ExpandAll();
+            _onlineTree.ExpandAll();
+        }
 
         public async Task Execute(IJobExecutionContext context)
         {

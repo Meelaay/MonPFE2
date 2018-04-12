@@ -27,7 +27,7 @@ namespace MonPFE
         }
 
         //bug fix wait time at launch when not connected
-        public  int TestConnectivity()
+        public int TestConnectivity()
         {
             _connection = new SqlConnection(base._connectionString);
             try
@@ -48,6 +48,30 @@ namespace MonPFE
 
                 return (int)ExitCode.UnknownError;
             }
+        }
+
+        public int ExecuteScalarQuery(string query)
+        {
+            int countNumber = -1;
+            _connection = new SqlConnection(base._connectionString);
+            try
+            {
+                using (var command = new SqlCommand(query, _connection))
+                {
+                    command.Connection.Open();
+                    countNumber = Convert.ToInt32(command.ExecuteScalar()) ;
+                    command.Connection.Close();
+
+                }
+            }
+            catch (Exception e)
+            {
+                //bug remove this popup at the end
+                Debug.WriteLine(e.Message);
+                throw new Exception("scalar sql server ...");
+            }
+
+            return countNumber;
         }
 
         public int GetNewClientId()
@@ -77,6 +101,9 @@ namespace MonPFE
             return false;
             
         }
+
+        
+
 
         public string GetClientPublicIP()
         {

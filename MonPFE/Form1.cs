@@ -53,7 +53,7 @@ namespace MonPFE
             DatabaseDirectory selectedDir = new DatabaseDirectory(-1, "null", -1);
             DatabaseFile selectedFile = new DatabaseFile(-1, "null", "null", -1);
 
-              string promptValue = Prompt.ShowDialog("New folder name :", "New Folder...");
+            string promptValue = Prompt.ShowDialog("New folder name :", "New Folder...");
 
 
             if (onlineTView.Enabled)
@@ -99,21 +99,26 @@ namespace MonPFE
 
             //===========================================================================
             //FOR DEBUGING 
-            string c = $"selected file : id : {selectedFile.id_file}, name : {selectedFile.name_file}, path : {selectedFile.path_file}, parent : {selectedFile.parent_folder}";
-            string a = $"selected folder : id : {selectedDir.id_folder}, name : {selectedDir.name_Folder}, parent : {selectedDir.parent_folder}";
+            //string c = $"selected file : id : {selectedFile.id_file}, name : {selectedFile.name_file}, path : {selectedFile.path_file}, parent : {selectedFile.parent_folder}";
+            //string a = $"selected folder : id : {selectedDir.id_folder}, name : {selectedDir.name_Folder}, parent : {selectedDir.parent_folder}";
 
-            Debug.WriteLine(c);
-            Debug.WriteLine(a);
+            //Debug.WriteLine(c);
+            //Debug.WriteLine(a);
             //===========================================================================
 
 
             if (promptValue == "")
             {
-                return;
 
             }
             else
             {
+                if(selectedDir.id_folder != -1)
+                    _engine.AddFolder(promptValue, selectedDir);
+
+                if (selectedFile.id_file != -1)
+                    _engine.AddFolder(promptValue, selectedFile);
+                 
 
             }
 
@@ -134,21 +139,85 @@ namespace MonPFE
 
         private void btnAddFile_Click(object sender, EventArgs e)
         {
-            
 
+            DatabaseDirectory selectedDir = new DatabaseDirectory(-1, "null", -1);
+            DatabaseFile selectedFile = new DatabaseFile(-1, "null", "null", -1);
 
-            //Sdfgsdfgdsfgsdffgh 
+            string path = "init";
+            OpenFileDialog file = new OpenFileDialog();
 
-            /*
-                string path = "init";
-                OpenFileDialog file = new OpenFileDialog();
-                if (file.ShowDialog() == DialogResult.OK)
+            if (file.ShowDialog() == DialogResult.OK)
+            {
+                path = file.FileName;
+                path = file.SafeFileName;
+            }
+
+            if (onlineTView.Enabled)
+            {
+                try
                 {
-                    path = file.FileName;
+                    if (typeof(DatabaseDirectory) == onlineTView.SelectedNode.Tag.GetType())
+                    {
+                        selectedDir = (DatabaseDirectory)onlineTView.SelectedNode.Tag;
+                    }
+                    else if (typeof(DatabaseFile) == onlineTView.SelectedNode.Tag.GetType())
+                    {
+                        selectedFile = (DatabaseFile)onlineTView.SelectedNode.Tag;
+                    }
                 }
-                MessageBox.Show(path);
+                catch (NullReferenceException ne)
+                {
+                    //if no folder was selected, select root
+                    selectedDir = (DatabaseDirectory)onlineTView.Nodes[0].Tag;
+
+                }
+            }
+            else if (offlineTView.Enabled)
+            {
+                try
+                {
+                    if (typeof(DatabaseDirectory) == offlineTView.SelectedNode.Tag.GetType())
+                    {
+                        selectedDir = (DatabaseDirectory)offlineTView.SelectedNode.Tag;
+                    }
+                    else if (typeof(DatabaseFile) == offlineTView.SelectedNode.Tag.GetType())
+                    {
+                        selectedFile = (DatabaseFile)offlineTView.SelectedNode.Tag;
+                    }
+
+                }
+                catch (NullReferenceException ne)
+                {
+                    //if no folder was selected, select root
+                    selectedDir = (DatabaseDirectory)offlineTView.Nodes[0].Tag;
+                }
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            MessageBox.Show(path);
             
-            */
+            
             
         }
 
@@ -167,8 +236,9 @@ namespace MonPFE
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string a = $"online tView : {onlineTView.Enabled}, offline tView : {offlineTView.Enabled}";
-            Debug.WriteLine(a);
+
+//            string a = $"online tView : {onlineTView.Enabled}, offline tView : {offlineTView.Enabled}";
+  //          Debug.WriteLine(a);
         }
 
 
