@@ -32,13 +32,14 @@
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.schedulesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pBoxStatIndicator = new System.Windows.Forms.PictureBox();
-            this.tView = new System.Windows.Forms.TreeView();
+            this.onlineTView = new System.Windows.Forms.TreeView();
             this.btnSync = new System.Windows.Forms.Button();
             this.btnAddFolder = new System.Windows.Forms.Button();
             this.btnAddFile = new System.Windows.Forms.Button();
-            this.treeView1 = new System.Windows.Forms.TreeView();
+            this.offlineTView = new System.Windows.Forms.TreeView();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pBoxStatIndicator)).BeginInit();
             this.SuspendLayout();
@@ -78,12 +79,12 @@
             this.pBoxStatIndicator.TabIndex = 1;
             this.pBoxStatIndicator.TabStop = false;
             // 
-            // tView
+            // onlineTView
             // 
-            this.tView.Location = new System.Drawing.Point(12, 36);
-            this.tView.Name = "tView";
-            this.tView.Size = new System.Drawing.Size(251, 244);
-            this.tView.TabIndex = 2;
+            this.onlineTView.Location = new System.Drawing.Point(12, 36);
+            this.onlineTView.Name = "onlineTView";
+            this.onlineTView.Size = new System.Drawing.Size(251, 244);
+            this.onlineTView.TabIndex = 2;
             // 
             // btnSync
             // 
@@ -115,12 +116,12 @@
             this.btnAddFile.UseVisualStyleBackColor = true;
             this.btnAddFile.Click += new System.EventHandler(this.btnAddFile_Click);
             // 
-            // treeView1
+            // offlineTView
             // 
-            this.treeView1.Location = new System.Drawing.Point(270, 36);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(257, 244);
-            this.treeView1.TabIndex = 6;
+            this.offlineTView.Location = new System.Drawing.Point(270, 36);
+            this.offlineTView.Name = "offlineTView";
+            this.offlineTView.Size = new System.Drawing.Size(257, 244);
+            this.offlineTView.TabIndex = 6;
             // 
             // label1
             // 
@@ -140,18 +141,29 @@
             this.label2.TabIndex = 7;
             this.label2.Text = "SQLite";
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(533, 132);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 8;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(619, 309);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.treeView1);
+            this.Controls.Add(this.offlineTView);
             this.Controls.Add(this.btnAddFile);
             this.Controls.Add(this.btnAddFolder);
             this.Controls.Add(this.btnSync);
-            this.Controls.Add(this.tView);
+            this.Controls.Add(this.onlineTView);
             this.Controls.Add(this.pBoxStatIndicator);
             this.Controls.Add(this.menuStrip1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -173,13 +185,14 @@
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem schedulesToolStripMenuItem;
         private System.Windows.Forms.PictureBox pBoxStatIndicator;
-        private System.Windows.Forms.TreeView tView;
+        private System.Windows.Forms.TreeView onlineTView;
         private System.Windows.Forms.Button btnSync;
         private System.Windows.Forms.Button btnAddFolder;
         private System.Windows.Forms.Button btnAddFile;
-        private System.Windows.Forms.TreeView treeView1;
+        private System.Windows.Forms.TreeView offlineTView;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button button1;
     }
 }
 

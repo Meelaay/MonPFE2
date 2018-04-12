@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,16 +39,92 @@ namespace MonPFE
 
 
             _formInterface = new FormInterface();
-            _formInterface.InitiatlizeFormInterface(pBoxStatIndicator, tView, treeView1, btnSync, _configMenu.GetConfigInterface());
+            _formInterface.InitiatlizeFormInterface(pBoxStatIndicator, onlineTView, offlineTView, btnSync, _configMenu.GetConfigInterface());
 
             _engine = new SyncEngine();
             _engine.InitializeEngine(_formInterface);
-
+            offlineTView.ExpandAll();
+            onlineTView.ExpandAll();
         }
 
         private void btnAddFolder_Click(object sender, EventArgs e)
-        {   
-            /* used to close app
+        {
+
+            DatabaseDirectory selectedDir = new DatabaseDirectory(-1, "null", -1);
+            DatabaseFile selectedFile = new DatabaseFile(-1, "null", "null", -1);
+
+              string promptValue = Prompt.ShowDialog("New folder name :", "New Folder...");
+
+
+            if (onlineTView.Enabled)
+            {
+                try
+                {
+                    if (typeof(DatabaseDirectory) == onlineTView.SelectedNode.Tag.GetType())
+                    {
+                        selectedDir = (DatabaseDirectory)onlineTView.SelectedNode.Tag;
+                    }
+                    else if (typeof(DatabaseFile) == onlineTView.SelectedNode.Tag.GetType())
+                    {
+                        selectedFile = (DatabaseFile)onlineTView.SelectedNode.Tag;
+                    }
+                }
+                catch (NullReferenceException ne)
+                {
+                    //if no folder was selected, select root
+                    selectedDir = (DatabaseDirectory)onlineTView.Nodes[0].Tag;
+
+                }
+            }
+            else if (offlineTView.Enabled)
+            {
+                try
+                {
+                    if (typeof(DatabaseDirectory) == offlineTView.SelectedNode.Tag.GetType())
+                    {
+                        selectedDir = (DatabaseDirectory) offlineTView.SelectedNode.Tag;
+                    }
+                    else if (typeof(DatabaseFile) == offlineTView.SelectedNode.Tag.GetType())
+                    {
+                        selectedFile = (DatabaseFile) offlineTView.SelectedNode.Tag;
+                    }
+
+                }
+                catch (NullReferenceException ne)
+                {
+                    //if no folder was selected, select root
+                    selectedDir = (DatabaseDirectory)offlineTView.Nodes[0].Tag;
+                }
+            }
+
+            //===========================================================================
+            //FOR DEBUGING 
+            string c = $"selected file : id : {selectedFile.id_file}, name : {selectedFile.name_file}, path : {selectedFile.path_file}, parent : {selectedFile.parent_folder}";
+            string a = $"selected folder : id : {selectedDir.id_folder}, name : {selectedDir.name_Folder}, parent : {selectedDir.parent_folder}";
+
+            Debug.WriteLine(c);
+            Debug.WriteLine(a);
+            //===========================================================================
+
+
+            if (promptValue == "")
+            {
+                return;
+
+            }
+            else
+            {
+
+            }
+
+
+
+
+            
+
+
+
+            /* used to "close" app
             this.WindowState = FormWindowState.Minimized;
             this.FormBorderStyle = FormBorderStyle.SizableToolWindow;
             this.ShowInTaskbar = false;
@@ -87,5 +164,13 @@ namespace MonPFE
         {
 
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string a = $"online tView : {onlineTView.Enabled}, offline tView : {offlineTView.Enabled}";
+            Debug.WriteLine(a);
+        }
+
+
     }
 }

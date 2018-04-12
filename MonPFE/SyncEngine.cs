@@ -105,11 +105,12 @@ namespace MonPFE
 
 
                 //disables interface for changing jobs
-                formInterface.EnableDisableConfigInterface(false);
+                formInterface.EnableConfigInterface(false);
 
                 //todo code for tree:
                 SetOfflineTree();
-
+                _formInterface.EnableOfflineTree(true);
+                _formInterface.EnableOnlineTree(false);
 
                 //throw new Exception("not yet configured");
 
@@ -122,7 +123,7 @@ namespace MonPFE
                 //bug  _timeManager.StartScheduler(2);
 
                 //Enable formInterface for change of cronEpxr
-                formInterface.EnableDisableConfigInterface(IsEnabled: true);
+                formInterface.EnableConfigInterface(IsEnabled: true);
 
                 //todo code to load tree
                 int nonSyncedFiles = _sqLiteConnector.ExecuteScalarQuery("SELECT COUNT(*) FROM Files WHERE is_synced = 0");
@@ -131,8 +132,8 @@ namespace MonPFE
                 if (nonSyncedFolders != 0 || nonSyncedFiles != 0)
                 {
                     //formInterface --> disable sqlserver tree and enable sqlite tree
-                    _formInterface.SetOnlineTree(isEnabled: false);
-                    _formInterface.SetOfflineTree(isEnabled: true);
+                    _formInterface.EnableOnlineTree(isEnabled: false);
+                    _formInterface.EnableOfflineTree(isEnabled: true);
 
                     SetOfflineTree();
                     
@@ -140,8 +141,8 @@ namespace MonPFE
                 }
                 else
                 {
-                    _formInterface.SetOnlineTree(isEnabled: true);
-                    _formInterface.SetOfflineTree(isEnabled: false);
+                    _formInterface.EnableOnlineTree(isEnabled: true);
+                    _formInterface.EnableOfflineTree(isEnabled: false);
                     SetOnlineTree();
                 }
 
@@ -162,7 +163,7 @@ namespace MonPFE
 
         private void SetOnlineTree()
         {
-            _rootDirectory = new DatabaseDirectory();
+            _rootDirectory = new DatabaseDirectory(clientID: _client._clientID);
 
             _rootDirectory = _rootDirectory.CreateNode(
                 _sqlServerConnector.ExecuteSelectQuery("select * from Folders where id_folder = 0").Rows[0],
@@ -174,7 +175,7 @@ namespace MonPFE
 
         private void SetOfflineTree()
         {
-            _rootDirectory = new DatabaseDirectory();
+            _rootDirectory = new DatabaseDirectory(clientID: _client._clientID);
 
             _rootDirectory = _rootDirectory.CreateNode(
                 _sqLiteConnector.ExecuteSelectQuery("select * from Folders where id_folder = 0").Rows[0],

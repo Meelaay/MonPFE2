@@ -36,12 +36,12 @@ namespace MonPFE
             SetLight();
         }
 
-        public void SetOnlineTree(bool isEnabled)
+        public void EnableOnlineTree(bool isEnabled)
         {
             _onlineTree.Enabled = isEnabled;
         }
 
-        public void SetOfflineTree(bool isEnabled)
+        public void EnableOfflineTree(bool isEnabled)
         {
             _offlineTree.Enabled = isEnabled;
         }
@@ -78,6 +78,8 @@ namespace MonPFE
         public TreeNode CreateNode(DatabaseDirectory databaseDirectory)
         {
             var dirNode = new TreeNode(databaseDirectory.name_Folder);
+            dirNode.Tag = databaseDirectory;
+
             //add tag for dirNode
             
             foreach (var directory in databaseDirectory.GetDirectories())
@@ -87,25 +89,15 @@ namespace MonPFE
 
             foreach (var file in databaseDirectory.GetFiles())
             {
-                dirNode.Nodes.Add(new TreeNode(file.name_file));
-                //Add tag
+                var a = new TreeNode(file.name_file);
+                a.Tag = file;
+                dirNode.Nodes.Add(a);
             }
 
             return dirNode;
         }
 
-        private static TreeNode CreateDirectoryNode(DirectoryInfo directoryInfo)
-        {
-            var directoryNode = new TreeNode(directoryInfo.Name);
-
-            foreach (var directory in directoryInfo.GetDirectories())
-                directoryNode.Nodes.Add(CreateDirectoryNode(directory));
-
-            foreach (var file in directoryInfo.GetFiles())
-                directoryNode.Nodes.Add(new TreeNode(file.Name));
-
-            return directoryNode;
-        }
+        
 
         
         //=============================================================================
@@ -126,7 +118,7 @@ namespace MonPFE
 
         }
 
-        public void EnableDisableConfigInterface(bool IsEnabled)
+        public void EnableConfigInterface(bool IsEnabled)
         {
             _configInterface.SetControlsState(IsEnabled: IsEnabled);
         }
@@ -184,6 +176,8 @@ namespace MonPFE
             //...
         }
 
+
+        //to delete
         public TreeNode CreateNode(DataTable foldersTable, DataTable filesTable, TreeView tView)
         {
             //add a node for folder from foldersDt
@@ -197,8 +191,19 @@ namespace MonPFE
             var rootDirectoryInfo = new DirectoryInfo(path);
             treeView.Nodes.Add(CreateDirectoryNode(rootDirectoryInfo));
         }
+        private static TreeNode CreateDirectoryNode(DirectoryInfo directoryInfo)
+        {
+            var directoryNode = new TreeNode(directoryInfo.Name);
+
+            foreach (var directory in directoryInfo.GetDirectories())
+                directoryNode.Nodes.Add(CreateDirectoryNode(directory));
+
+            foreach (var file in directoryInfo.GetFiles())
+                directoryNode.Nodes.Add(new TreeNode(file.Name));
+
+            return directoryNode;
+        }
 
 
-        
     }
 }

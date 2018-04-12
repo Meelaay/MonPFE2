@@ -15,6 +15,8 @@ namespace MonPFE
         private static SQLServerConnector SqlServerConnector;
         private static SQLiteConnector SqlLiteConnector;
 
+        private int _clientID;
+
         public List<DatabaseDirectory> FoldersList = new List<DatabaseDirectory>();
         public List<DatabaseFile> FilesList = new List<DatabaseFile>();
 
@@ -31,8 +33,9 @@ namespace MonPFE
             DatabaseDirectory.SqlLiteConnector = sqlLiteConnector;
         }
 
-        public DatabaseDirectory()
+        public DatabaseDirectory(int clientID)
         {
+            _clientID = clientID;
             SqlServerConnector = 
                 new SQLServerConnector(@"Data Source=DESKTOP-DJONOS6\SQLEXPRESS;Initial Catalog=PFE;Integrated Security=True;Connection Timeout = 5");
 
@@ -49,11 +52,15 @@ namespace MonPFE
                 Convert.ToInt32(nodeRow["parent_folder"])
             );
 
+
+            //Add and client_created_by  = clientID
             var childFoldersDataTable = connector.ExecuteSelectQuery(
-                string.Format("select * from Folders where parent_folder = {0}", nodeRow["id_folder"])
+                string.Format("select * from Folders where parent_folder = {0} and created_by_client = {1}",
+                    nodeRow["id_folder"], _clientID)
             );
             var childFilesDataTable = connector.ExecuteSelectQuery(
-                string.Format("select * from Files where parent_folder = {0}", nodeRow["id_folder"])
+                string.Format("select * from Files where parent_folder = {0} and created_by_client = {1}",
+                    nodeRow["id_folder"], _clientID)
             );
 
             foreach (DataRow row in childFoldersDataTable.Rows)

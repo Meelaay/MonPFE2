@@ -14,7 +14,7 @@ namespace MonPFE
         private bool _isOnline;
         public bool IsSet;
 
-        private int    _clientID;
+        public int    _clientID;
         private string _clientName;
 
         //private string _clientPublicIP;
@@ -45,7 +45,7 @@ namespace MonPFE
 
         public Client()
         {
-            //debug ctor
+            //bug debug ctor
             _isOnline = true;
             this.IsSet = true;
             _clientID = 1;
