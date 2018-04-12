@@ -43,7 +43,16 @@ namespace MonPFE
 //            }
 //        }
 
-
+        public Client()
+        {
+            //debug ctor
+            _isOnline = true;
+            this.IsSet = true;
+            _clientID = 1;
+            ScheduleID = 1;
+            _clientName = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+            _cronExpression = "notSet";
+        }
 
         public Client(SQLServerConnector sqlServerConnector, SQLiteConnector sqLiteConnector, Enum connectivityState)
         {

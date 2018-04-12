@@ -55,6 +55,7 @@ namespace MonPFE
 
         }
 
+
         public bool? IsNotEmpty(string tableName)
         {
             int rowsCount;
@@ -81,11 +82,13 @@ namespace MonPFE
 
             return null;
         }
-        /*
-        public int tobenamed(string tableName)
+
+
+
+        public int ExecuteScalarQuery(string query)
         {
             int rowsCount;
-            string query = String.Format("SELECT COUNT(*) FROM {0}", tableName);
+            //string query = String.Format("SELECT COUNT(*) FROM {0}", tableName);
             using (var command = new SQLiteCommand(query, _connection))
             {
                 try
@@ -97,18 +100,14 @@ namespace MonPFE
                 catch (Exception e)
                 {
                     Debug.WriteLine(e.Message);
-                    rowsCount = -1;
-                    return null;
+                    return -1;
                 }
             }
-            if (rowsCount > 0)
-                return true;
-            if (rowsCount == 0)
-                return false;
 
-            return null;
+            return rowsCount;
         }
-        */
+
+
         public void ImportFromSqliteToSqlServer(SqlConnection destSqlConnection)
         {
             using (var command = new SQLiteCommand("SELECT * FROM localTable", _connection))
@@ -162,5 +161,7 @@ namespace MonPFE
                 }
             }
         }
+
+        
     }
 }

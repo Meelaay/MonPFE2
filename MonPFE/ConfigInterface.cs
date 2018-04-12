@@ -95,7 +95,7 @@ namespace MonPFE
         {
             _startsAt = picker;
             _okButton = okButton;
-
+            _weekDaysList = new List<CheckBox>();
             foreach (var checkBox in weekdayChBox)
                 _weekDaysList.Add(checkBox);
 

@@ -78,12 +78,18 @@ namespace MonPFE
         public TreeNode CreateNode(DatabaseDirectory databaseDirectory)
         {
             var dirNode = new TreeNode(databaseDirectory.name_Folder);
-
+            //add tag for dirNode
+            
             foreach (var directory in databaseDirectory.GetDirectories())
+            {
                 dirNode.Nodes.Add(CreateNode(directory));
+            }
 
             foreach (var file in databaseDirectory.GetFiles())
+            {
                 dirNode.Nodes.Add(new TreeNode(file.name_file));
+                //Add tag
+            }
 
             return dirNode;
         }

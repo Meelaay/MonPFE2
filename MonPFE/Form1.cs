@@ -13,7 +13,8 @@ namespace MonPFE
     {
         private FormInterface _formInterface;
         private SyncEngine _engine;
-        private ConfigMenu _configMenu;
+        private ConfigMenu _configMenu = new ConfigMenu();
+           
 
 
         //todo override what close button does so it keeps app running in bg
@@ -35,8 +36,9 @@ namespace MonPFE
         {
             InitializeComponent();
 
+
             _formInterface = new FormInterface();
-            _formInterface.InitiatlizeFormInterface(pBoxStatIndicator, tView, null, btnSync, null);
+            _formInterface.InitiatlizeFormInterface(pBoxStatIndicator, tView, treeView1, btnSync, _configMenu.GetConfigInterface());
 
             _engine = new SyncEngine();
             _engine.InitializeEngine(_formInterface);
@@ -50,12 +52,12 @@ namespace MonPFE
             this.FormBorderStyle = FormBorderStyle.SizableToolWindow;
             this.ShowInTaskbar = false;
             */
-            _engine.stop();
+
         }
 
         private void btnAddFile_Click(object sender, EventArgs e)
         {
-            _engine.test();
+            
 
 
             //Sdfgsdfgdsfgsdffgh 
@@ -75,7 +77,7 @@ namespace MonPFE
 
         private void schedulesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _configMenu = new ConfigMenu();
+            //try catch {get state of cnc and cronExpr}
             _configMenu.Show();
 
             _configMenu.Activate();

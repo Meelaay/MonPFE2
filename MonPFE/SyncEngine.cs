@@ -79,7 +79,12 @@ namespace MonPFE
 
             _formInterface.SetCorrStatus((ConnectivityState)_connectivityStateEnum);
 
-            _client = new Client(_sqlServerConnector, _sqLiteConnector, _connectivityStateEnum);
+            //_client = new Client(_sqlServerConnector, _sqLiteConnector, _connectivityStateEnum);
+            
+            
+            //Debug:
+            _client = new Client();
+
 
             if ((ConnectivityState)_connectivityStateEnum == ConnectivityState.Offline)
             {
@@ -120,42 +125,31 @@ namespace MonPFE
                 formInterface.EnableDisableConfigInterface(IsEnabled: true);
 
                 //todo code to load tree
-                _sqLiteConnector.
+                int nonSyncedFiles = _sqLiteConnector.ExecuteScalarQuery("SELECT COUNT(*) FROM Files WHERE is_synced = 0");
+                int nonSyncedFolders = _sqLiteConnector.ExecuteScalarQuery("SELECT COUNT(*) FROM Folders WHERE is_synced = 0");
 
+                if (nonSyncedFolders != 0 || nonSyncedFiles != 0)
+                {
+                    //formInterface --> disable sqlserver tree and enable sqlite tree
+                    _formInterface.SetOnlineTree(isEnabled: false);
+                    _formInterface.SetOfflineTree(isEnabled: true);
 
-                /*
-                 * bool isSyncFull = check if sqlite syncTable is full
-                 *
-                 * isSyncFull = true  :
-                 *      formInterface->disable sqlserver tree
-                 *      formInterface->enable  sqlite tree
-                 *      
-                 *      load tree from backup table
-                 *      
-                 *      bug prompt to sync and lock database if accepted to sync ??
-                 *      
-                 * isSyncFull = false :
-                 *      forminterface->disable sqlite tree and enable sqlserver's
-                 *      instantiate directory from sqlserver
-                 *              
-                 */
-
+                    SetOfflineTree();
+                    
+                    //bug prompt to sync and lock database if accepted to sync ??
+                }
+                else
+                {
+                    _formInterface.SetOnlineTree(isEnabled: true);
+                    _formInterface.SetOfflineTree(isEnabled: false);
+                    SetOnlineTree();
+                }
 
             }
 
-
-
-
-
-
-
-            if ((ConnectivityState)_connectivityStateEnum == ConnectivityState.Online)
-                SetOnlineTree();
-            else if ((ConnectivityState)_connectivityStateEnum == ConnectivityState.Offline)
-                SetOfflineTree();
             
 
-            
+
         }
 
         
