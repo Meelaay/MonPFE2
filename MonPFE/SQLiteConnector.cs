@@ -64,9 +64,12 @@ namespace MonPFE
             {
                 using (var transaction = _connection.BeginTransaction())
                 {
+                    cmd.CommandText = "insert into Folders (id_folder, name_folder, parent_folder, created_by_client, is_synced) values(1, 'root', 2147483647, null, 1)";
+                    cmd.ExecuteNonQuery();
+
                     foreach (DataRow row in dataTable.Rows)
                     {
-                        cmd.CommandText = string.Format("insert into Folders (id_folder, name_folder, parent_folder, created_by_client, is_synced) values({0}, {1}, {2}, {3}, {4})",
+                        cmd.CommandText = string.Format("insert into Folders (id_folder, name_folder, parent_folder, created_by_client, is_synced) values({0}, '{1}', {2}, {3}, {4})",
                             Convert.ToInt32(row["id_folder"]),
                             row["name_folder"],
                             Convert.ToInt32(row["parent_folder"]),
@@ -95,9 +98,10 @@ namespace MonPFE
                 {
                     foreach (DataRow row in dataTable.Rows)
                     {
-                        cmd.CommandText = string.Format("insert into Folders (id_folder, name_folder, parent_folder, created_by_client, is_synced) values({0}, {1}, {2}, {3}, {4})",
-                            Convert.ToInt32(row["id_folder"]),
-                            row["name_folder"],
+                        cmd.CommandText = string.Format("insert into Files (id_file, name_file, path_file, parent_folder, created_by_client, is_synced) values({0}, '{1}', '{2}', {3}, {4}, {5})",
+                            Convert.ToInt32(row["id_file"]),
+                            row["name_file"],
+                            row["path_file"],
                             Convert.ToInt32(row["parent_folder"]),
                             Convert.ToInt32(row["created_by_client"]),
                             1
@@ -168,11 +172,11 @@ namespace MonPFE
         }
 
 
-        public void ImportFromSqliteToSqlServer(SqlConnection destSqlConnection, DataTable dataTable)
+        public void ExportFromSqliteToSqlServer(SqlConnection destSqlConnection, DataTable dataTable, string target)
         {
             using (SqlBulkCopy bc = new SqlBulkCopy(destSqlConnection))
             {
-                bc.DestinationTableName = "Folders";
+                bc.DestinationTableName = target;
                 destSqlConnection.Open();
                 bc.WriteToServer(dataTable);
                 destSqlConnection.Close();

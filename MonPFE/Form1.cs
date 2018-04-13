@@ -113,6 +113,7 @@ namespace MonPFE
             }
             else
             {
+                
                 if(selectedDir.id_folder != -1)
                     _engine.AddFolder(promptValue, selectedDir);
 

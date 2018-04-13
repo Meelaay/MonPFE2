@@ -162,6 +162,7 @@ namespace MonPFE
 
         public SqlConnection GetConnection()
         {
+            _connection = new SqlConnection(base._connectionString);
             return _connection;
         }
 
