@@ -61,6 +61,9 @@ namespace MonPFE
             //else
             //try to get a new connection 
             //if it fails ?
+            //bug fix this
+            context.Get("syncenigzfrg");
+
         }
 
 

@@ -20,7 +20,7 @@ namespace MonPFE
         private SQLiteConnector _sqLiteConnector;
         private SQLServerConnector _sqlServerConnector;
 
-        //bug private SyncTimeManager _timeManager;
+        private SyncTimeManager _timeManager;
 
         private Enum _connectivityStateEnum;
 
@@ -33,8 +33,10 @@ namespace MonPFE
 
         public void test(string a)
         {
-            var b = _sqlServerConnector.ExecuteScalarQuery(a);
-            MessageBox.Show(b.ToString());
+            //var b = _sqlServerConnector.ExecuteScalarQuery(a);
+            //MessageBox.Show(b.ToString());
+            MessageBox.Show(_sqLiteConnString);
+
             //_sqLiteConnector.ExecuteInsertQuery("insert into Files (id_file, name_file, path_file, parent_folder, created_by_client, is_synced) values(21, 'test', 'path1', 2, 1, 0 )");
 
             //_sqLiteConnector.ExecuteInsertQuery("insert into Files (name_file, path_file, parent_folder, created_by_client, is_synced) values('test', 'path2', 3, 1, 0)");
@@ -189,7 +191,6 @@ namespace MonPFE
                     Debug.WriteLine("Cannot connect to internet");
 
 
-                    //bug  _timeManager.StartScheduler(1);
 
                     break;
 
@@ -372,8 +373,8 @@ namespace MonPFE
 
 
 
-            //bug _timeManager = new SyncTimeManager();
-            //bug _timeManager.Init(this);
+            _timeManager = new SyncTimeManager();
+            _timeManager.Init(this);
 
 
 
@@ -398,8 +399,9 @@ namespace MonPFE
                 {
                     //start last set schedule by client (cronExpr from sqlite)
                     string cronExpr = _client.GetCron();
-                    //bug  _timeManager.RescheduleFromCronExpr(cronExpr);
-                    //bug  _timeManager.StartScheduler(2);
+
+                    _timeManager.RescheduleFromCronExpr(cronExpr);
+                    _timeManager.StartScheduler(2);
 
                     //set interface depending on cronExpression
                     _formInterface.SetConfigInterfaceCron(cronExpr);
@@ -425,8 +427,8 @@ namespace MonPFE
             {
                 //launch job from cronExpr
                 string cronExpr = _client.GetCron();
-                //bug  _timeManager.RescheduleFromCronExpr(cronExpr);
-                //bug  _timeManager.StartScheduler(2);
+                _timeManager.RescheduleFromCronExpr(cronExpr);
+                _timeManager.StartScheduler(2);
 
                 //Enable formInterface for change of cronEpxr
                 formInterface.EnableConfigInterface(IsEnabled: true);
@@ -530,7 +532,7 @@ namespace MonPFE
             if (_sqlServerConnector != null && _sqlServerConnector.TestConnectivity() == (int) ExitCode.Success)
             {
                 _connectivityStateEnum = ConnectivityState.Online;
-                //bug  _timeManager.StopScheduler(1);
+                _timeManager.StopScheduler(1);
             }
             else
             {
@@ -542,7 +544,7 @@ namespace MonPFE
                     {
                         Debug.WriteLine("connectivityenum SET ONLINE");
                         _connectivityStateEnum = ConnectivityState.Online;
-                        //bug  _timeManager.StopScheduler(1);
+                        _timeManager.StopScheduler(1);
                     }
                     else
                         throw new Exception("Cannot connect to sqlserver.");
@@ -551,7 +553,7 @@ namespace MonPFE
                 catch (Exception e)
                 {
                     Debug.WriteLine("SyncEngine::SetConnectivityState() -> " + e.Message);
-                    //bug  _timeManager.StartScheduler(1);
+                    _timeManager.StartScheduler(1);
                     _connectivityStateEnum = ConnectivityState.Offline;
                 }
             }

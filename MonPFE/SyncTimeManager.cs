@@ -70,6 +70,7 @@ namespace MonPFE
             //_scheduler.Context.Put("connectivityState", connectivityState);
             _scheduler.Context.Put("engine", engine);
             //_scheduler.Context.Put("formInterface", formInterface);
+            _scheduler2.Context.Put("SyncEngine", engine);
 
             await _scheduler.ScheduleJob(_jobDetail, _trigger);
             await _scheduler2.ScheduleJob(_jobDetail2, _trigger2);

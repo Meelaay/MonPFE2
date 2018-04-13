@@ -10,10 +10,12 @@ using System.Windows.Forms;
 
 namespace MonPFE
 {
+
     public partial class Form1 : Form
     {
+        public static SyncEngine _engine;
+
         private FormInterface _formInterface;
-        private SyncEngine _engine;
         private ConfigMenu _configMenu = new ConfigMenu();
            
 
@@ -43,6 +45,7 @@ namespace MonPFE
 
             _engine = new SyncEngine();
             _engine.InitializeEngine(_formInterface);
+
             offlineTView.ExpandAll();
             onlineTView.ExpandAll();
         }

@@ -14,7 +14,6 @@ namespace MonPFE
 
         public SQLServerConnector(string connectionString) : base(connectionString)
         {
-            //BUG BUG add try catch here : 
             try
             {
                 _connection = new SqlConnection(connectionString);

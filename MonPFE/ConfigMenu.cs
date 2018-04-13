@@ -56,6 +56,7 @@ namespace MonPFE
         private void button1_Click(object sender, EventArgs e)
         {
             //on ok click check if taken and signal failure if exists
+            Form1._engine.test("");
             //else accept values and register it in database
         }
 
