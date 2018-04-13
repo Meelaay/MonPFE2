@@ -51,7 +51,6 @@ namespace MonPFE
         {
 
             DatabaseDirectory selectedDir = new DatabaseDirectory(-1, "null", -1);
-            DatabaseFile selectedFile = new DatabaseFile(-1, "null", "null", -1);
 
             string promptValue = Prompt.ShowDialog("New folder name :", "New Folder...");
 
@@ -66,7 +65,8 @@ namespace MonPFE
                     }
                     else if (typeof(DatabaseFile) == onlineTView.SelectedNode.Tag.GetType())
                     {
-                        selectedFile = (DatabaseFile)onlineTView.SelectedNode.Tag;
+                        selectedDir = (DatabaseDirectory)onlineTView.SelectedNode.Parent.Tag;
+
                     }
                 }
                 catch (NullReferenceException ne)
@@ -82,11 +82,11 @@ namespace MonPFE
                 {
                     if (typeof(DatabaseDirectory) == offlineTView.SelectedNode.Tag.GetType())
                     {
-                        selectedDir = (DatabaseDirectory) offlineTView.SelectedNode.Tag;
+                        selectedDir = (DatabaseDirectory)offlineTView.SelectedNode.Tag;
                     }
                     else if (typeof(DatabaseFile) == offlineTView.SelectedNode.Tag.GetType())
                     {
-                        selectedFile = (DatabaseFile) offlineTView.SelectedNode.Tag;
+                        selectedDir = (DatabaseDirectory)offlineTView.SelectedNode.Parent.Tag;
                     }
 
                 }
@@ -116,8 +116,7 @@ namespace MonPFE
                 if(selectedDir.id_folder != -1)
                     _engine.AddFolder(promptValue, selectedDir);
 
-                if (selectedFile.id_file != -1)
-                    _engine.AddFolder(promptValue, selectedFile);
+                
                  
 
             }
@@ -141,16 +140,7 @@ namespace MonPFE
         {
 
             DatabaseDirectory selectedDir = new DatabaseDirectory(-1, "null", -1);
-            DatabaseFile selectedFile = new DatabaseFile(-1, "null", "null", -1);
 
-            string path = "init";
-            OpenFileDialog file = new OpenFileDialog();
-
-            if (file.ShowDialog() == DialogResult.OK)
-            {
-                path = file.FileName;
-                path = file.SafeFileName;
-            }
 
             if (onlineTView.Enabled)
             {
@@ -162,7 +152,8 @@ namespace MonPFE
                     }
                     else if (typeof(DatabaseFile) == onlineTView.SelectedNode.Tag.GetType())
                     {
-                        selectedFile = (DatabaseFile)onlineTView.SelectedNode.Tag;
+                        selectedDir = (DatabaseDirectory)onlineTView.SelectedNode.Parent.Tag;
+
                     }
                 }
                 catch (NullReferenceException ne)
@@ -182,7 +173,7 @@ namespace MonPFE
                     }
                     else if (typeof(DatabaseFile) == offlineTView.SelectedNode.Tag.GetType())
                     {
-                        selectedFile = (DatabaseFile)offlineTView.SelectedNode.Tag;
+                        selectedDir = (DatabaseDirectory)offlineTView.SelectedNode.Parent.Tag;
                     }
 
                 }
@@ -196,29 +187,23 @@ namespace MonPFE
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            MessageBox.Show(path);
+            //===========================================
             
-            
-            
+            OpenFileDialog file = new OpenFileDialog();
+
+            if (file.ShowDialog() == DialogResult.OK)
+                if(selectedDir.id_folder != -1)
+                _engine.AddFile(file.SafeFileName, file.FileName, selectedDir);
+                
+
+            //===========================================
+
+
+
+
+
+
+
         }
 
         private void schedulesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -232,6 +217,11 @@ namespace MonPFE
         private void btnSync_Click(object sender, EventArgs e)
         {
 
+
+
+            _engine.test("SET IDENTITY_INSERT Folders ON; " +
+                         "INSERT INTO Folders (id_folder, name_folder, parent_folder, created_by_client) VALUES(15555, 'folder1000', 1, 1); " +
+                         "SET IDENTITY_INSERT Folders OFF");
         }
 
         private void button1_Click(object sender, EventArgs e)

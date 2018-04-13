@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Data;
 using System.Diagnostics;
 using System.Threading;
@@ -30,11 +31,13 @@ namespace MonPFE
 
         private int times = 0;
 
-        public void test()
+        public void test(string a)
         {
+            _sqlServerConnector.ExecuteInsertQuery(a);
+
             //
-            string userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
-            MessageBox.Show(userName);
+            //string userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+            //MessageBox.Show(userName);
 
             /*
             times++;
@@ -72,6 +75,7 @@ namespace MonPFE
             {
                 int a = _sqLiteConnector.ExecuteScalarQuery(countQuery);
 
+                //throw exception or write function to check validity in sqlserver/lite
                 if (a != 0)
                     name = name + " (2)";
 
@@ -117,8 +121,72 @@ namespace MonPFE
 
         }
 
-        public void AddFolder(string name, DatabaseFile sameLevelFile)
+        public void AddFile(string name, string path, DatabaseDirectory parentDirectory)
         {
+            string countQuery = string.Format(
+                "select count(*) from Files where name_file = '{0}' and parent_folder = {1}",
+                name,
+                parentDirectory.id_folder
+            );
+
+
+
+            if ((ConnectivityState)_connectivityStateEnum == ConnectivityState.Offline)
+            {
+                int a = _sqLiteConnector.ExecuteScalarQuery(countQuery);
+
+                //throw exception or write function to check validity in sqlserver/lite
+                //while a != 0 i++; originalName + ('i')
+                if (a != 0)
+                    name = name + " (2)";
+
+                string insertOfflineQuery = String.Format(
+                    "insert into Files (name_file, path_file, parent_folder, created_by_client, is_synced) values('{0}', '{1}', {2}, {3}, {4})",
+                    name,
+                    path,
+                    parentDirectory.id_folder,
+                    _client._clientID,
+                    0
+                );
+                _sqLiteConnector.ExecuteInsertQuery(insertOfflineQuery);
+
+                SetOfflineTree();
+
+            }
+            else if ((ConnectivityState)_connectivityStateEnum == ConnectivityState.Online)
+            {
+                int a = _sqlServerConnector.ExecuteScalarQuery(countQuery);
+
+                if (a != 0)
+                    name = name + " (2)";
+
+                string insertOnlineQuery = String.Format(
+                    "insert into Files (name_file, path_file, parent_folder, created_by_client) values('{0}', '{1}', {2}, {3})",
+                    name,
+                    path,
+                    parentDirectory.id_folder,
+                    _client._clientID
+                );
+
+                _sqlServerConnector.ExecuteInsertQuery(insertOnlineQuery);
+
+                string insertOfflineQuery = String.Format(
+                    "insert into Files (name_file, path_file, parent_folder, created_by_client, is_synced) values('{0}', '{1}', {2}, {3}, {4})",
+                    name,
+                    path,
+                    parentDirectory.id_folder,
+                    _client._clientID,
+                    1
+                );
+                _sqLiteConnector.ExecuteInsertQuery(insertOfflineQuery);
+
+                SetOnlineTree();
+            }
+            _formInterface.ExpandTrees();
+
+
+
+
 
         }
 
