@@ -83,7 +83,7 @@
             // 
             this.onlineTView.Location = new System.Drawing.Point(12, 36);
             this.onlineTView.Name = "onlineTView";
-            this.onlineTView.Size = new System.Drawing.Size(251, 244);
+            this.onlineTView.Size = new System.Drawing.Size(251, 430);
             this.onlineTView.TabIndex = 2;
             // 
             // btnSync
@@ -120,13 +120,13 @@
             // 
             this.offlineTView.Location = new System.Drawing.Point(270, 36);
             this.offlineTView.Name = "offlineTView";
-            this.offlineTView.Size = new System.Drawing.Size(257, 244);
+            this.offlineTView.Size = new System.Drawing.Size(257, 430);
             this.offlineTView.TabIndex = 6;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(113, 283);
+            this.label1.Location = new System.Drawing.Point(112, 473);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(59, 13);
             this.label1.TabIndex = 7;
@@ -135,7 +135,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(375, 283);
+            this.label2.Location = new System.Drawing.Point(374, 473);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(39, 13);
             this.label2.TabIndex = 7;
@@ -155,7 +155,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(619, 309);
+            this.ClientSize = new System.Drawing.Size(619, 504);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);

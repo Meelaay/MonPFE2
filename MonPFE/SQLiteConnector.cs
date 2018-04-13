@@ -19,6 +19,7 @@ namespace MonPFE
         public bool CheckIfFirstTimeClient()
         {
             return true;
+
         }
 
         public override int ExecuteInsertQuery(string query)
@@ -54,6 +55,65 @@ namespace MonPFE
             }
 
         }
+
+        public void BulkInsertFolders(DataTable dataTable)
+        {
+            _connection.Open();
+
+            using (var cmd = new SQLiteCommand(_connection))
+            {
+                using (var transaction = _connection.BeginTransaction())
+                {
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        cmd.CommandText = string.Format("insert into Folders (id_folder, name_folder, parent_folder, created_by_client, is_synced) values({0}, {1}, {2}, {3}, {4})",
+                            Convert.ToInt32(row["id_folder"]),
+                            row["name_folder"],
+                            Convert.ToInt32(row["parent_folder"]),
+                            Convert.ToInt32(row["created_by_client"]),
+                            1
+                        );
+                        cmd.ExecuteNonQuery();
+
+                    }
+
+                    transaction.Commit();
+                }
+            }
+
+
+            _connection.Close();
+        }
+
+        public void BulkInsertFiles(DataTable dataTable)
+        {
+            _connection.Open();
+
+            using (var cmd = new SQLiteCommand(_connection))
+            {
+                using (var transaction = _connection.BeginTransaction())
+                {
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        cmd.CommandText = string.Format("insert into Folders (id_folder, name_folder, parent_folder, created_by_client, is_synced) values({0}, {1}, {2}, {3}, {4})",
+                            Convert.ToInt32(row["id_folder"]),
+                            row["name_folder"],
+                            Convert.ToInt32(row["parent_folder"]),
+                            Convert.ToInt32(row["created_by_client"]),
+                            1
+                        );
+                        cmd.ExecuteNonQuery();
+
+                    }
+
+                    transaction.Commit();
+                }
+            }
+
+
+            _connection.Close();
+        }
+
 
 
         public bool? IsNotEmpty(string tableName)
@@ -108,43 +168,20 @@ namespace MonPFE
         }
 
 
-        public void ImportFromSqliteToSqlServer(SqlConnection destSqlConnection)
+        public void ImportFromSqliteToSqlServer(SqlConnection destSqlConnection, DataTable dataTable)
         {
-            using (var command = new SQLiteCommand("SELECT * FROM localTable", _connection))
+            using (SqlBulkCopy bc = new SqlBulkCopy(destSqlConnection))
             {
-                try
-                {
-                    command.Connection.Open();
-
-                    using (SQLiteDataReader dr = command.ExecuteReader())
-                    {
-                        
-                        using (destSqlConnection)
-                        {
-                            using (SqlBulkCopy bc = new SqlBulkCopy(destSqlConnection))
-                            {
-                                bc.DestinationTableName = "onlineTable";
-                                destSqlConnection.Open();
-                                //look at execute select query
-                                bc.WriteToServer(dr);
-                                
-                                destSqlConnection.Close();
-                            }
-                        }
-                    }
-                    command.Connection.Close();
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show(e.Message);
-                }
+                bc.DestinationTableName = "Folders";
+                destSqlConnection.Open();
+                bc.WriteToServer(dataTable);
+                destSqlConnection.Close();
             }
-
         }
 
-        public int PurgeTable()
+        public int PurgeTable(string tableName)
         {
-            using (var command = new SQLiteCommand("DELETE FROM localTable", _connection))
+            using (var command = new SQLiteCommand("DELETE FROM " + tableName, _connection))
             {
                 try
                 {

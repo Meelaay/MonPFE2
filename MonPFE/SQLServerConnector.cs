@@ -68,7 +68,7 @@ namespace MonPFE
             {
                 //bug remove this popup at the end
                 Debug.WriteLine(e.Message);
-                throw new Exception("scalar sql server ...");
+                throw new Exception("error scalar sql server ...");
             }
 
             return countNumber;
@@ -126,7 +126,7 @@ namespace MonPFE
                 {
                     command.Connection.Open();
 
-                    MessageBox.Show("SQLServerConnector::ExecuteInsertQuery() -3 opened");
+                    //MessageBox.Show("SQLServerConnector::ExecuteInsertQuery() -3 opened");
                     //or set command.CommandText here instead of query above
                     int rowsAffected = command.ExecuteNonQuery();
 
@@ -143,8 +143,6 @@ namespace MonPFE
             }
 
         }
-
-
 
         public override DataTable ExecuteSelectQuery(string query)
         {

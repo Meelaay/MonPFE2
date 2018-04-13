@@ -216,19 +216,23 @@ namespace MonPFE
 
         private void btnSync_Click(object sender, EventArgs e)
         {
+            _engine.Synchronize();
 
 
+            
 
+            /*
             _engine.test("SET IDENTITY_INSERT Folders ON; " +
                          "INSERT INTO Folders (id_folder, name_folder, parent_folder, created_by_client) VALUES(15555, 'folder1000', 1, 1); " +
                          "SET IDENTITY_INSERT Folders OFF");
+            */
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-
-//            string a = $"online tView : {onlineTView.Enabled}, offline tView : {offlineTView.Enabled}";
-  //          Debug.WriteLine(a);
+            _engine.test("");
+            //            string a = $"online tView : {onlineTView.Enabled}, offline tView : {offlineTView.Enabled}";
+            //          Debug.WriteLine(a);
         }
 
 

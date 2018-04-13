@@ -33,7 +33,11 @@ namespace MonPFE
 
         public void test(string a)
         {
-            _sqlServerConnector.ExecuteInsertQuery(a);
+            var b = _sqlServerConnector.ExecuteScalarQuery(a);
+            MessageBox.Show(b.ToString());
+            //_sqLiteConnector.ExecuteInsertQuery("insert into Files (id_file, name_file, path_file, parent_folder, created_by_client, is_synced) values(21, 'test', 'path1', 2, 1, 0 )");
+
+            //_sqLiteConnector.ExecuteInsertQuery("insert into Files (name_file, path_file, parent_folder, created_by_client, is_synced) values('test', 'path2', 3, 1, 0)");
 
             //
             //string userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
@@ -63,12 +67,8 @@ namespace MonPFE
         public void AddFolder(string name, DatabaseDirectory parentDirectory)
         {
             //check if folder name already exists within same parent folder
-            string countQuery = string.Format(
-                "select count(*) from Folders where name_folder = '{0}' and parent_folder = {1}",
-                name,
-                parentDirectory.id_folder
-            );
-
+            string countQuery = string.Format("select count(*) from Folders where name_folder = '{0}' and parent_folder = {1}", name,
+                    parentDirectory.id_folder);
             
 
             if ((ConnectivityState)_connectivityStateEnum == ConnectivityState.Offline)
@@ -79,40 +79,34 @@ namespace MonPFE
                 if (a != 0)
                     name = name + " (2)";
 
-                string insertOfflineQuery = String.Format(
-                    "insert into Folders (name_folder, parent_folder, created_by_client, is_synced) values('{0}', {1}, {2}, {3})",
-                    name,
-                    parentDirectory.id_folder,
-                    _client._clientID,
-                    0
-                    );
+                string insertOfflineQuery = String.Format("insert into Folders (name_folder, parent_folder, created_by_client, is_synced) values('{0}', {1}, {2}, {3})",
+                    name, parentDirectory.id_folder, _client._clientID, 0);
+
                 _sqLiteConnector.ExecuteInsertQuery(insertOfflineQuery);
 
                 SetOfflineTree();
 
-            }else if ((ConnectivityState) _connectivityStateEnum == ConnectivityState.Online)
+            }//=======================================================================================================================================================================
+            else if ((ConnectivityState) _connectivityStateEnum == ConnectivityState.Online)
             {
+                //check
+
+
                 int a = _sqlServerConnector.ExecuteScalarQuery(countQuery);
 
                 if (a != 0)
                     name = name + " (2)";
 
-                string insertOnlineQuery = String.Format(
-                    "insert into Folders (name_folder, parent_folder, created_by_client) values('{0}', {1}, {2})",
-                    name,
-                    parentDirectory.id_folder,
-                    _client._clientID
-                );
+                string insertOnlineQuery = String.Format("insert into Folders (id_folder, name_folder, parent_folder, created_by_client) values(next value for id_folder_seq, '{0}', {1}, {2})",
+                    name, parentDirectory.id_folder, _client._clientID);
 
                 _sqlServerConnector.ExecuteInsertQuery(insertOnlineQuery);
+                //get last id of inserted record
+                int newId = _sqlServerConnector.ExecuteScalarQuery("SELECT MAX(id_folder) FROM Folders");
 
-                string insertOfflineQuery = String.Format(
-                    "insert into Folders (name_folder, parent_folder, created_by_client, is_synced) values('{0}', {1}, {2}, {3})",
-                    name,
-                    parentDirectory.id_folder,
-                    _client._clientID,
-                    1
-                );
+                string insertOfflineQuery = String.Format("insert into Folders (id_folder, name_folder, parent_folder, created_by_client, is_synced) values({0}, '{1}', {2}, {3}, {4})",
+                    newId, name, parentDirectory.id_folder, _client._clientID, 1);
+
                 _sqLiteConnector.ExecuteInsertQuery(insertOfflineQuery);
 
                 SetOnlineTree();
@@ -123,12 +117,9 @@ namespace MonPFE
 
         public void AddFile(string name, string path, DatabaseDirectory parentDirectory)
         {
-            string countQuery = string.Format(
-                "select count(*) from Files where name_file = '{0}' and parent_folder = {1}",
-                name,
-                parentDirectory.id_folder
-            );
-
+            //check if folder name already exists within same parent folder
+            string countQuery = string.Format("select count(*) from Files where name_file = '{0}' and parent_folder = {1}", name,
+                    parentDirectory.id_folder);
 
 
             if ((ConnectivityState)_connectivityStateEnum == ConnectivityState.Offline)
@@ -140,19 +131,14 @@ namespace MonPFE
                 if (a != 0)
                     name = name + " (2)";
 
-                string insertOfflineQuery = String.Format(
-                    "insert into Files (name_file, path_file, parent_folder, created_by_client, is_synced) values('{0}', '{1}', {2}, {3}, {4})",
-                    name,
-                    path,
-                    parentDirectory.id_folder,
-                    _client._clientID,
-                    0
-                );
+                string insertOfflineQuery = String.Format("insert into Files (name_file, path_file, parent_folder, created_by_client, is_synced) values('{0}', '{1}', {2}, {3}, {4})",
+                    name, path, parentDirectory.id_folder, _client._clientID, 0);
+
                 _sqLiteConnector.ExecuteInsertQuery(insertOfflineQuery);
 
                 SetOfflineTree();
 
-            }
+            }//=======================================================================================================================================================================
             else if ((ConnectivityState)_connectivityStateEnum == ConnectivityState.Online)
             {
                 int a = _sqlServerConnector.ExecuteScalarQuery(countQuery);
@@ -160,24 +146,16 @@ namespace MonPFE
                 if (a != 0)
                     name = name + " (2)";
 
-                string insertOnlineQuery = String.Format(
-                    "insert into Files (name_file, path_file, parent_folder, created_by_client) values('{0}', '{1}', {2}, {3})",
-                    name,
-                    path,
-                    parentDirectory.id_folder,
-                    _client._clientID
-                );
+                string insertOnlineQuery = String.Format("insert into Files (id_file, name_file, path_file, parent_folder, created_by_client) values(next value for id_file_seq, '{0}', '{1}', {2}, {3})",
+                    name, path, parentDirectory.id_folder, _client._clientID);
 
                 _sqlServerConnector.ExecuteInsertQuery(insertOnlineQuery);
+                //get last id of inserted record
+                int newId = _sqlServerConnector.ExecuteScalarQuery("SELECT MAX(id_file) FROM Files");
 
-                string insertOfflineQuery = String.Format(
-                    "insert into Files (name_file, path_file, parent_folder, created_by_client, is_synced) values('{0}', '{1}', {2}, {3}, {4})",
-                    name,
-                    path,
-                    parentDirectory.id_folder,
-                    _client._clientID,
-                    1
-                );
+                string insertOfflineQuery = String.Format("insert into Files (id_file, name_file, path_file, parent_folder, created_by_client, is_synced) values({0} ,'{1}', '{2}', {3}, {4}, {5})",
+                    newId, name, path, parentDirectory.id_folder, _client._clientID, 1);
+
                 _sqLiteConnector.ExecuteInsertQuery(insertOfflineQuery);
 
                 SetOnlineTree();
@@ -189,6 +167,7 @@ namespace MonPFE
 
 
         }
+
 
 
 
@@ -287,8 +266,8 @@ namespace MonPFE
 
         }
 
-        
 
+        
 
         public void stop()
         {
@@ -386,7 +365,7 @@ namespace MonPFE
 
         
 
-        private void Synchronize()
+        public void Synchronize()
         {
             int state = Convert.ToInt32(_connectivityStateEnum);
             //todo try to reconnect sqlserver instance
@@ -401,17 +380,85 @@ namespace MonPFE
                     break;
 
                 case (int)ConnectivityState.Online:
-                    bool? a = _sqLiteConnector.IsNotEmpty(null);
 
-                    if (a == true)
+                    //check if there's something to sync in files or folders
+                    string filesCountQuery = "select count(*) from Files where is_synced = 0";
+                    string foldersCountQuery = "select count(*) from Folders where is_synced = 0";
+                    int nonSyncedFilesCount = _sqLiteConnector.ExecuteScalarQuery(filesCountQuery);
+                    int nonSyncedFoldersCount = _sqLiteConnector.ExecuteScalarQuery(foldersCountQuery);
+
+                    //if nothing to sync return
+                    if (nonSyncedFoldersCount + nonSyncedFilesCount == 0)
                     {
-                        //BUG careful of GetConnection() dispose prblm
-                        _sqLiteConnector.ImportFromSqliteToSqlServer(_sqlServerConnector.GetConnection());
-                        this._sqLiteConnector.PurgeTable();
+                        MessageBox.Show("Nothing to sync.");
+                        return;
+                    }else
+                    {
+                        //lock db or use transaction
+                        if (nonSyncedFoldersCount != 0)
+                        {
+                            //get last id of folders :                                                                     ===     +1
+                            int newValidID =
+                                _sqlServerConnector.ExecuteScalarQuery("SELECT MAX(id_folder) FROM Folders") + 1;
+                            //fill datatable of non synced items :
+                            DataTable nonSyncedFoldersTable = _sqLiteConnector.ExecuteSelectQuery("select * from Folders where is_synced = 0");
 
-                        //BUG ???
-                        //bug     _timeManager.StopScheduler(1);
+                            int oldFolderID;
+
+                            nonSyncedFoldersTable.Columns.Remove("is_synced");
+
+
+                            int lastRowValidID = newValidID + nonSyncedFoldersTable.Rows.Count - 1;
+
+                            //change ids accordignly
+                            for (int i = nonSyncedFoldersTable.Rows.Count; i > 0 ; i--)
+                            {
+                                oldFolderID = Convert.ToInt32(nonSyncedFoldersTable.Rows[i - 1]["id_folder"]) ;
+                                nonSyncedFoldersTable.Rows[i - 1]["id_folder"] = lastRowValidID;
+
+                                for (int j = nonSyncedFoldersTable.Rows.Count; j > 0; j--)
+                                    if (Convert.ToInt32(nonSyncedFoldersTable.Rows[j - 1]["parent_folder"]) == oldFolderID)
+                                        nonSyncedFoldersTable.Rows[j - 1]["parent_folder"] = lastRowValidID;
+
+                                _sqlServerConnector.ExecuteSelectQuery("SELECT NEXT VALUE FOR id_folder_seq");
+
+                                lastRowValidID--;
+                            }
+
+                            _sqLiteConnector.ImportFromSqliteToSqlServer(_sqlServerConnector.GetConnection(), nonSyncedFoldersTable);
+
+                            //empty sqlite
+                            _sqLiteConnector.PurgeTable("Folders");
+
+                            //fill sqlite from sqlserver
+                            _sqLiteConnector.BulkInsertFolders(_sqlServerConnector.ExecuteSelectQuery(
+                                "select * from Folders where created_by_client = " + _client._clientID
+                            ));
+
+                        }
+
+                        if (nonSyncedFilesCount != 0)
+                        {
+                            
+                        }
+
+
                     }
+
+
+
+
+
+
+                    //get last id of folders or files
+                    //fill 2 datatables of nonsynced items and return it
+
+                    
+                    //bulk copy to sqlserver
+                    //delete * from lite
+                    //fill sqlite from sqlserver where idclient = {}
+                    //unlock db
+                    //return;
 
                     break;
             }
