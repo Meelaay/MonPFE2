@@ -46,7 +46,7 @@ namespace MonPFE
                 .WithIdentity("each2minTrigger", "group1")
                 .StartNow()
                 .WithSimpleSchedule(x => x
-                    .WithIntervalInSeconds(120)
+                    .WithIntervalInSeconds(20)
                     .RepeatForever())
                 .Build();
             /*
@@ -92,8 +92,12 @@ namespace MonPFE
             //_scheduler2.ScheduleJob(_jobDetail2, _trigger2);
         }
 
-        
 
+
+        public void ContinueScheduler()
+        {
+            _scheduler.ResumeAll();
+        }
 
         public void StartScheduler(int i)
         {

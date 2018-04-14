@@ -22,11 +22,11 @@ namespace MonPFE
 
         private SyncTimeManager _timeManager;
 
-        private Enum _connectivityStateEnum;
+        public Enum _connectivityStateEnum;
 
-        private FormInterface _formInterface;
+        public FormInterface _formInterface;
 
-        private Client _client;
+        public Client _client;
         private DatabaseDirectory _rootDirectory;
 
         private int times = 0;
@@ -66,13 +66,18 @@ namespace MonPFE
 
         }
 
+        public void ChangeCronExpr(string cronExpr)
+        {
+            //check if cronExpr9
+        }
+
         public void AddFolder(string name, DatabaseDirectory parentDirectory)
         {
             //check if folder name already exists within same parent folder
             string countQuery = string.Format("select count(*) from Folders where name_folder = '{0}' and parent_folder = {1}", name,
                     parentDirectory.id_folder);
             
-
+            
             if ((ConnectivityState)_connectivityStateEnum == ConnectivityState.Offline)
             {
                 int a = _sqLiteConnector.ExecuteScalarQuery(countQuery);
@@ -93,25 +98,40 @@ namespace MonPFE
             {
                 //check if sqlite has no synced items
 
+                try
+                {
+                    int a = _sqlServerConnector.ExecuteScalarQuery(countQuery);
 
-                int a = _sqlServerConnector.ExecuteScalarQuery(countQuery);
+                    if (a != 0)
+                        name = name + " (2)";
 
-                if (a != 0)
-                    name = name + " (2)";
+                    string insertOnlineQuery = String.Format("insert into Folders (id_folder, name_folder, parent_folder, created_by_client) values(next value for id_folder_seq, '{0}', {1}, {2})",
+                        name, parentDirectory.id_folder, _client._clientID);
 
-                string insertOnlineQuery = String.Format("insert into Folders (id_folder, name_folder, parent_folder, created_by_client) values(next value for id_folder_seq, '{0}', {1}, {2})",
-                    name, parentDirectory.id_folder, _client._clientID);
+                    _sqlServerConnector.ExecuteInsertQuery(insertOnlineQuery);
+                    //get last id of inserted record
+                    int newId = _sqlServerConnector.ExecuteScalarQuery("SELECT MAX(id_folder) FROM Folders");
 
-                _sqlServerConnector.ExecuteInsertQuery(insertOnlineQuery);
-                //get last id of inserted record
-                int newId = _sqlServerConnector.ExecuteScalarQuery("SELECT MAX(id_folder) FROM Folders");
+                    string insertOfflineQuery = String.Format("insert into Folders (id_folder, name_folder, parent_folder, created_by_client, is_synced) values({0}, '{1}', {2}, {3}, {4})",
+                        newId, name, parentDirectory.id_folder, _client._clientID, 1);
 
-                string insertOfflineQuery = String.Format("insert into Folders (id_folder, name_folder, parent_folder, created_by_client, is_synced) values({0}, '{1}', {2}, {3}, {4})",
-                    newId, name, parentDirectory.id_folder, _client._clientID, 1);
+                    _sqLiteConnector.ExecuteInsertQuery(insertOfflineQuery);
 
-                _sqLiteConnector.ExecuteInsertQuery(insertOfflineQuery);
+                    SetOnlineTree();
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("Cannot connect in SQL Server.");
 
-                SetOnlineTree();
+                    _connectivityStateEnum = ConnectivityState.Offline;
+                    SetOfflineTree();
+                    _formInterface.EnableOnlineTree(isEnabled: false);
+                    _formInterface.EnableOfflineTree(isEnabled: true);
+                    _formInterface.PassOffline();
+                    _timeManager.ContinueScheduler();
+
+                }
+                
             }
             _formInterface.ExpandTrees();
 
@@ -181,6 +201,8 @@ namespace MonPFE
 
         }
 
+
+
         public void Synchronize()
         {
             int state = Convert.ToInt32(_connectivityStateEnum);
@@ -188,10 +210,7 @@ namespace MonPFE
             switch (state)
             {
                 case (int)ConnectivityState.Offline:
-                    Debug.WriteLine("Cannot connect to internet");
-
-
-
+                    MessageBox.Show("Cannot connect to SQL Server.");
                     break;
 
                 case (int)ConnectivityState.Online:
@@ -205,6 +224,17 @@ namespace MonPFE
                     if (nonSyncedFoldersCount + nonSyncedFilesCount == 0)
                     {
                         MessageBox.Show("Nothing to synchronize.");
+                        //disable offline tree
+                        SetOnlineTree();
+                        SetOfflineTree();
+                        _formInterface.ExpandTrees();
+                        _formInterface.EnableOnlineTree(true);
+                        _formInterface.EnableOfflineTree(false);
+
+                        //enable online tree
+                        //reload directories
+
+
                         return;
                     }
                     else
@@ -378,8 +408,6 @@ namespace MonPFE
 
 
 
-
-
             SetConnectivityState();
             DatabaseDirectory.SetConnectors(_sqlServerConnector, _sqLiteConnector);
 
@@ -390,7 +418,7 @@ namespace MonPFE
             
             
             //Debug:
-            _client = new Client();
+            _client = new Client(_sqlServerConnector, _sqLiteConnector, _connectivityStateEnum);
 
 
             if ((ConnectivityState)_connectivityStateEnum == ConnectivityState.Offline)
@@ -400,7 +428,7 @@ namespace MonPFE
                     //start last set schedule by client (cronExpr from sqlite)
                     string cronExpr = _client.GetCron();
 
-                    _timeManager.RescheduleFromCronExpr(cronExpr);
+                    //_timeManager.RescheduleFromCronExpr(cronExpr);
                     _timeManager.StartScheduler(2);
 
                     //set interface depending on cronExpression
@@ -413,7 +441,6 @@ namespace MonPFE
 
 
                 //disables interface for changing jobs
-                formInterface.EnableConfigInterface(false);
 
                 //todo code for tree:
                 SetOfflineTree();
@@ -427,11 +454,11 @@ namespace MonPFE
             {
                 //launch job from cronExpr
                 string cronExpr = _client.GetCron();
-                _timeManager.RescheduleFromCronExpr(cronExpr);
+                //_timeManager.RescheduleFromCronExpr(cronExpr);
                 _timeManager.StartScheduler(2);
 
                 //Enable formInterface for change of cronEpxr
-                formInterface.EnableConfigInterface(IsEnabled: true);
+                
 
                 //todo code to load tree
                 int nonSyncedFiles = _sqLiteConnector.ExecuteScalarQuery("SELECT COUNT(*) FROM Files WHERE is_synced = 0");
@@ -492,6 +519,7 @@ namespace MonPFE
             );
 
             _formInterface.DrawTree(_rootDirectory, isOnline: false);
+
         }
         
 
@@ -517,6 +545,8 @@ namespace MonPFE
                 
             else
                 currentEngine._formInterface.PassOffline();
+
+
 
             Debug.WriteLine("Job Ended");
             //currentInterface.EnableSyncButton();
@@ -578,8 +608,7 @@ namespace MonPFE
         }
 
 
-
-
+        
     }
     
 

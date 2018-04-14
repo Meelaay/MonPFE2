@@ -39,7 +39,6 @@ namespace MonPFE
         {
             InitializeComponent();
 
-
             _formInterface = new FormInterface();
             _formInterface.InitiatlizeFormInterface(pBoxStatIndicator, onlineTView, offlineTView, btnSync, _configMenu.GetConfigInterface());
 
@@ -116,9 +115,17 @@ namespace MonPFE
             }
             else
             {
+                try
+                {
+                    if (selectedDir.id_folder != -1)
+                        _engine.AddFolder(promptValue, selectedDir);
+                }
+                catch (Exception exception)
+                {
+                    
+
+                }
                 
-                if(selectedDir.id_folder != -1)
-                    _engine.AddFolder(promptValue, selectedDir);
 
                 
                  
@@ -213,6 +220,14 @@ namespace MonPFE
         private void schedulesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //try catch {get state of cnc and cronExpr}
+            _configMenu.configInter.CronToInterface(_engine._client.GetCron());
+            
+            if ((ConnectivityState)_engine._connectivityStateEnum == ConnectivityState.Offline)
+                _engine._formInterface.EnableConfigInterface(false);
+            else if ((ConnectivityState)_engine._connectivityStateEnum == ConnectivityState.Offline)
+                _engine._formInterface.EnableConfigInterface(true);
+
+
             _configMenu.Show();
 
             _configMenu.Activate();

@@ -12,8 +12,6 @@ namespace MonPFE
 {
     public class FormInterface : IJob
     {
-        
-
         private PictureBox _statusIndicator;
         private TreeView _offlineTree;
         private TreeView _onlineTree;
@@ -51,6 +49,12 @@ namespace MonPFE
             _offlineTree.ExpandAll();
             _onlineTree.ExpandAll();
         }
+
+        public void SetInterface()
+        {
+
+        }
+
 
         public async Task Execute(IJobExecutionContext context)
         {

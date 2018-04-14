@@ -11,7 +11,7 @@ namespace MonPFE
 
     public partial class ConfigMenu : Form
     {
-        private ConfigInterface configInter;
+        public ConfigInterface configInter;
 
         private const int CP_NOCLOSE_BUTTON = 0x200;
         protected override CreateParams CreateParams
@@ -49,14 +49,26 @@ namespace MonPFE
 
         private void button2_Click(object sender, EventArgs e)
         {
-
+            //cancel button
             this.Hide();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             //on ok click check if taken and signal failure if exists
-            Form1._engine.test("");
+            if ((ConnectivityState)Form1._engine._connectivityStateEnum == ConnectivityState.Offline)
+                MessageBox.Show("Cannot connect to SQL Server.");
+            else if ((ConnectivityState)Form1._engine._connectivityStateEnum == ConnectivityState.Online)
+            {
+                string cronExpr = configInter.InterfaceToCron();
+
+                Form1._engine.ChangeCronExpr(cronExpr);
+
+
+            }
+
+
+
             //else accept values and register it in database
         }
 
@@ -64,8 +76,7 @@ namespace MonPFE
         {
             //sm.Init();
 
-            MessageBox.Show("loaded.");
-
+            //SyncEngine._client.GetCron();
 
 
 
@@ -77,6 +88,25 @@ namespace MonPFE
 
 
         }
+
+        private void dateTimePicker1_KeyDown(object sender, KeyEventArgs e)
+        {
+            e.SuppressKeyPress = true;
+        }
+
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        {
+            if (this.dateTimePicker1.Value.Minute % 5 == 0)
+                return;
+
+            if (this.dateTimePicker1.Value.Minute % 5 == 1)
+                this.dateTimePicker1.Value = this.dateTimePicker1.Value.AddMinutes(4);
+
+            if (this.dateTimePicker1.Value.Minute % 5 == 4)
+                this.dateTimePicker1.Value = this.dateTimePicker1.Value.AddMinutes(-4);
+        }
+
+        
     }
 
 }

@@ -31,16 +31,32 @@ namespace MonPFE
         public void CronToInterface(string cronExpression)
         {
             List<string> weekDays = new List<string>(capacity:7);
-
+            //0 5 12 ? * MON,TUE,WED,THU,FRI,SAT,SUN *
             #region InitList
-                weekDays.Add("MON");
+            weekDays.Add("MON");
+                weekDays.Add("TUE");
+                weekDays.Add("WED");
+                weekDays.Add("THU");
+                weekDays.Add("FRI");
+                weekDays.Add("SAT");
+                weekDays.Add("SUN");
             //...
 
             #endregion
 
             // iterate through list of dayNames
+            foreach (var weekDay in weekDays)
+                if (cronExpression.Contains(weekDay))
+                    CheckDay(weekDay);
+
             //if substr(str"day", cronExpr) returns true check the 
             //corr checkbox[i] using CheckDay()
+            var minutes = cronExpression.Substring(2, 2);
+            var hours = cronExpression.Substring(4, 3);
+
+            DateTime dateTime = new DateTime(2018, 4, 2, Convert.ToInt32(hours), Convert.ToInt32(minutes), 0);
+
+            _startsAt.Value = dateTime;
 
             //extract date and time from cronExpr and assign it to datetimePicker
 
@@ -50,6 +66,30 @@ namespace MonPFE
         private void CheckDay(string day)
         {
             //switch on day 
+            switch (day)
+            {
+                case "MON":
+                    _weekDaysList[0].Checked = true;
+                    break;
+                case "TUE":
+                    _weekDaysList[1].Checked = true;
+                    break;
+                case "WED":
+                    _weekDaysList[2].Checked = true;
+                    break;
+                case "THU":
+                    _weekDaysList[3].Checked = true;
+                    break;
+                case "FRI":
+                    _weekDaysList[4].Checked = true;
+                    break;
+                case "SAT":
+                    _weekDaysList[5].Checked = true;
+                    break;
+                case "SUN":
+                    _weekDaysList[6].Checked = true;
+                    break;
+            }
             //if == "MON" check weekDaysList[0]
             //...
         }
@@ -86,6 +126,7 @@ namespace MonPFE
             cronExpression.Append(f);
             cronExpression.Append(" *");
 
+            
 
             return cronExpression.ToString();
         }
