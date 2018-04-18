@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace MonPFE
         private TreeView _onlineTree;
         public Button _syncButton;
 
-        private ConfigInterface _configInterface;
+        public ConfigInterface _configInterface;
         
 
         private const string redLightPath = @"..\..\sprites\images\redLight.png";
@@ -28,6 +29,7 @@ namespace MonPFE
             _statusIndicator = statusIndicator;
             _offlineTree = localTree;
             _onlineTree = onlineTree;
+            
             _syncButton = syncButton;
             _configInterface = configInterface;
             
@@ -50,23 +52,17 @@ namespace MonPFE
             _onlineTree.ExpandAll();
         }
 
-        public void SetInterface()
-        {
-
-        }
 
 
         public async Task Execute(IJobExecutionContext context)
         {
-           // Console.Beep();
-            //...
-            //test if connection to sqlserver is available
-            //if yes sync
-            //else
-            //try to get a new connection 
-            //if it fails ?
-            //bug fix this
-            context.Get("syncenigzfrg");
+            Debug.WriteLine("joooob");
+            var schedulerContext = context.Scheduler.Context;
+
+            var currentEngine = (SyncEngine)schedulerContext.Get("engine");
+
+            currentEngine.SetConnectivityState();
+            currentEngine.Synchronize();
 
         }
 
@@ -91,7 +87,8 @@ namespace MonPFE
         {
             var dirNode = new TreeNode(databaseDirectory.name_Folder);
             dirNode.Tag = databaseDirectory;
-
+            dirNode.ImageIndex = 0;
+            dirNode.SelectedImageIndex = 0;
             //add tag for dirNode
             
             foreach (var directory in databaseDirectory.GetDirectories())
@@ -103,6 +100,8 @@ namespace MonPFE
             {
                 var a = new TreeNode(file.name_file);
                 a.Tag = file;
+                a.ImageIndex = 2;
+                a.SelectedImageIndex = 2;
                 dirNode.Nodes.Add(a);
             }
 

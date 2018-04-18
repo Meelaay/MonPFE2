@@ -38,7 +38,7 @@ namespace MonPFE
         public Form1()
         {
             InitializeComponent();
-
+            this.onlineTView.ImageList = imageList1;
             _formInterface = new FormInterface();
             _formInterface.InitiatlizeFormInterface(pBoxStatIndicator, onlineTView, offlineTView, btnSync, _configMenu.GetConfigInterface());
 
@@ -131,13 +131,6 @@ namespace MonPFE
                  
 
             }
-
-
-
-
-            
-
-
 
             /* used to "close" app
             this.WindowState = FormWindowState.Minimized;
@@ -236,24 +229,13 @@ namespace MonPFE
         private void btnSync_Click(object sender, EventArgs e)
         {
             _engine.Synchronize();
-
-
             
-
-            /*
-            _engine.test("SET IDENTITY_INSERT Folders ON; " +
-                         "INSERT INTO Folders (id_folder, name_folder, parent_folder, created_by_client) VALUES(15555, 'folder1000', 1, 1); " +
-                         "SET IDENTITY_INSERT Folders OFF");
-            */
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            _engine.test("");
-            //            string a = $"online tView : {onlineTView.Enabled}, offline tView : {offlineTView.Enabled}";
-            //          Debug.WriteLine(a);
+            offlineTView.ExpandAll();
+            onlineTView.ExpandAll();
         }
-
-
     }
 }

@@ -16,11 +16,6 @@ namespace MonPFE
             _connection = new SQLiteConnection(base._connectionString);
         }
 
-        public bool CheckIfFirstTimeClient()
-        {
-            return true;
-
-        }
 
         public override int ExecuteInsertQuery(string query)
         {
@@ -120,34 +115,6 @@ namespace MonPFE
 
 
 
-        public bool? IsNotEmpty(string tableName)
-        {
-            int rowsCount;
-            string query = String.Format("SELECT COUNT(*) FROM {0}", tableName);
-            using (var command = new SQLiteCommand(query, _connection))
-            {
-                try
-                {
-                    command.Connection.Open();
-                    rowsCount = Convert.ToInt32(command.ExecuteScalar().ToString());
-                    command.Connection.Close();
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e.Message);
-                    rowsCount = -1;
-                    return null;
-                }
-            }
-            if (rowsCount > 0)
-                return true;
-            if (rowsCount == 0)
-                return false;
-
-            return null;
-        }
-
-
 
         public int ExecuteScalarQuery(string query)
         {
@@ -198,11 +165,16 @@ namespace MonPFE
                 {
                     MessageBox.Show(e.Message);
                     return -1;
-                    //throw...
                 }
             }
         }
 
-        
+        public void UpdateCronExprForClient(int clientId, string cronExpression)
+        {
+            var hours = cronExpression.Substring(4, 3);
+            var minutes = cronExpression.Substring(2, 2);
+            string query = string.Format("UPDATE Schedule SET cron_expr = '{0}', hour = {1}, minutes = {2} WHERE id_client = {3}", cronExpression, hours, minutes, clientId);
+            ExecuteInsertQuery(query);
+        }
     }
 }

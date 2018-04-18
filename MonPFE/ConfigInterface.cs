@@ -16,6 +16,8 @@ namespace MonPFE
 
         private Button _okButton;
 
+        private ConfigMenu _menu;
+
         public void SetControlsState(bool IsEnabled)
         {
             foreach (var checkBox in _weekDaysList)
@@ -24,6 +26,7 @@ namespace MonPFE
             _startsAt.Enabled = IsEnabled;
 
             _okButton.Enabled = IsEnabled;
+
         }
 
         
@@ -51,11 +54,10 @@ namespace MonPFE
 
             //if substr(str"day", cronExpr) returns true check the 
             //corr checkbox[i] using CheckDay()
-            var minutes = cronExpression.Substring(2, 2);
             var hours = cronExpression.Substring(4, 3);
+            var minutes = cronExpression.Substring(2, 2);
 
             DateTime dateTime = new DateTime(2018, 4, 2, Convert.ToInt32(hours), Convert.ToInt32(minutes), 0);
-
             _startsAt.Value = dateTime;
 
             //extract date and time from cronExpr and assign it to datetimePicker
@@ -122,31 +124,29 @@ namespace MonPFE
             if (_weekDaysList[6].Checked)
                 daysList.Add("SUN");
 
-            var f = string.Join(", ", daysList);
+            var f = string.Join(",", daysList);
             cronExpression.Append(f);
             cronExpression.Append(" *");
-
-            
 
             return cronExpression.ToString();
         }
 
+        public void Close()
+        {
+            _menu.Close();
+        }
 
-        public ConfigInterface(DateTimePicker picker, Button okButton, params CheckBox[] weekdayChBox)
+        public ConfigInterface(DateTimePicker picker, Button okButton, ConfigMenu menu, params CheckBox[] weekdayChBox)
         {
             _startsAt = picker;
             _okButton = okButton;
             _weekDaysList = new List<CheckBox>();
             foreach (var checkBox in weekdayChBox)
                 _weekDaysList.Add(checkBox);
-
+            _menu = menu;
         }
 
-        public void InitializeConfigInterface()
-        {
-            
-            //get current config from text file or sqlite db
-        }
+        
 
         
     }

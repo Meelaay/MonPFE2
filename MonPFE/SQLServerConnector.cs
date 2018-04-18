@@ -81,6 +81,7 @@ namespace MonPFE
 
         public string GetValidCronExpr()
         {
+
             //var row1 = select * from schedules where id = 1 ?"prob"
             //string row1.cronExpr. +5
 
@@ -89,32 +90,20 @@ namespace MonPFE
             return null;
         }
 
-        public bool IsCronExprValid(string cronExpr)
+        public bool IsCronExprValid(string cronExpression)
         {
-            //add 2 new columns hour and minutes
-            //int a = select count(*) where hour = cronExpr... and min = cron...
-            //if a != 0
-            //return false
-            //if a == 0 return true
-            //throw exception
+            var hours = cronExpression.Substring(4, 3);
+            var minutes = cronExpression.Substring(2, 2);
+
+            string query = string.Format("select count(*) from Schedules where hour = {0} and minutes = {1}", hours, minutes);
+            int a = ExecuteScalarQuery(query);
+
+            if (a == 0)
+                return true;
+
             return false;
             
         }
-
-        
-
-
-        public string GetClientPublicIP()
-        {
-            return "";
-        }
-
-        public string GetClientPrivateIP()
-        {
-            return "";
-        }
-
-
 
         public override int ExecuteInsertQuery(string query)
         {
@@ -165,5 +154,22 @@ namespace MonPFE
             return _connection;
         }
 
+        public void UpdateCronExprForClient(int clientId, string cronExpression)
+        {
+            var hours = cronExpression.Substring(4, 3);
+            var minutes = cronExpression.Substring(2, 2);
+            string query = string.Format("UPDATE Schedules SET cron_expr = '{0}', hour = {1}, minutes = {2} WHERE id_client = {3}", cronExpression, hours, minutes, clientId);
+            ExecuteInsertQuery(query);
+        }
+
+        //bug not implemented
+        public string GetClientPublicIP()
+        {
+            return "";
+        }
+        public string GetClientPrivateIP()
+        {
+            return "";
+        }
     }
 }

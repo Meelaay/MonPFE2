@@ -22,7 +22,7 @@ namespace MonPFE
 
         public int ScheduleID;
 
-        private string _cronExpression;
+        public string _cronExpression;
 
         public string GetCron()
         {
@@ -128,7 +128,7 @@ namespace MonPFE
 
             this._cronExpression = scheduleRow["cron_expr"].ToString();
             this._hour = Convert.ToInt32(scheduleRow["hour"]);
-            this._minute = Convert.ToInt32(scheduleRow["minute"]);
+            this._minute = Convert.ToInt32(scheduleRow["minutes"]);
 
         }
 

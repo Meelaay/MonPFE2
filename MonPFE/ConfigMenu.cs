@@ -38,7 +38,7 @@ namespace MonPFE
             //todo add check connection every 2 3 5 min ?
 
             configInter = new ConfigInterface(
-                dateTimePicker1, okButton, checkBox3, checkBox4, checkBox5, checkBox6, checkBox7, checkBox8, checkBox9 );
+                dateTimePicker1, okButton, this, checkBox3, checkBox4, checkBox5, checkBox6, checkBox7, checkBox8, checkBox9);
 
         }
 
@@ -72,38 +72,33 @@ namespace MonPFE
             //else accept values and register it in database
         }
 
+        public void Close()
+        {
+            button2_Click(null, null);
+        }
         private void ConfigMenu_Load(object sender, EventArgs e)
         {
-            //sm.Init();
-
-            //SyncEngine._client.GetCron();
-
-
-
-            /* select 
-             *
-             */
-
-
 
 
         }
 
         private void dateTimePicker1_KeyDown(object sender, KeyEventArgs e)
         {
-            e.SuppressKeyPress = true;
+            //e.SuppressKeyPress = true;
         }
 
         private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
         {
-            if (this.dateTimePicker1.Value.Minute % 5 == 0)
-                return;
+           /*
+           if (this.dateTimePicker1.Value.Minute % 5 == 0)
+               return;
 
-            if (this.dateTimePicker1.Value.Minute % 5 == 1)
-                this.dateTimePicker1.Value = this.dateTimePicker1.Value.AddMinutes(4);
+           if (this.dateTimePicker1.Value.Minute % 5 == 1)
+               this.dateTimePicker1.Value = this.dateTimePicker1.Value.AddMinutes(4);
 
-            if (this.dateTimePicker1.Value.Minute % 5 == 4)
-                this.dateTimePicker1.Value = this.dateTimePicker1.Value.AddMinutes(-4);
+           if (this.dateTimePicker1.Value.Minute % 5 == 4)
+               this.dateTimePicker1.Value = this.dateTimePicker1.Value.AddMinutes(-4);
+            */
         }
 
         

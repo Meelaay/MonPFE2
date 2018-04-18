@@ -28,11 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.schedulesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pBoxStatIndicator = new System.Windows.Forms.PictureBox();
             this.onlineTView = new System.Windows.Forms.TreeView();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.btnSync = new System.Windows.Forms.Button();
             this.btnAddFolder = new System.Windows.Forms.Button();
             this.btnAddFile = new System.Windows.Forms.Button();
@@ -81,10 +84,21 @@
             // 
             // onlineTView
             // 
+            this.onlineTView.ImageIndex = 0;
+            this.onlineTView.ImageList = this.imageList1;
             this.onlineTView.Location = new System.Drawing.Point(12, 36);
             this.onlineTView.Name = "onlineTView";
-            this.onlineTView.Size = new System.Drawing.Size(251, 613);
+            this.onlineTView.SelectedImageIndex = 0;
+            this.onlineTView.Size = new System.Drawing.Size(251, 731);
             this.onlineTView.TabIndex = 2;
+            // 
+            // imageList1
+            // 
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList1.Images.SetKeyName(0, "folder_icon.png");
+            this.imageList1.Images.SetKeyName(1, "file_icon.png");
+            this.imageList1.Images.SetKeyName(2, "file_icon2.png");
             // 
             // btnSync
             // 
@@ -98,7 +112,7 @@
             // 
             // btnAddFolder
             // 
-            this.btnAddFolder.Location = new System.Drawing.Point(533, 228);
+            this.btnAddFolder.Location = new System.Drawing.Point(533, 303);
             this.btnAddFolder.Name = "btnAddFolder";
             this.btnAddFolder.Size = new System.Drawing.Size(75, 23);
             this.btnAddFolder.TabIndex = 4;
@@ -108,7 +122,7 @@
             // 
             // btnAddFile
             // 
-            this.btnAddFile.Location = new System.Drawing.Point(533, 257);
+            this.btnAddFile.Location = new System.Drawing.Point(533, 332);
             this.btnAddFile.Name = "btnAddFile";
             this.btnAddFile.Size = new System.Drawing.Size(75, 23);
             this.btnAddFile.TabIndex = 5;
@@ -118,15 +132,18 @@
             // 
             // offlineTView
             // 
+            this.offlineTView.ImageIndex = 0;
+            this.offlineTView.ImageList = this.imageList1;
             this.offlineTView.Location = new System.Drawing.Point(270, 36);
             this.offlineTView.Name = "offlineTView";
-            this.offlineTView.Size = new System.Drawing.Size(257, 613);
+            this.offlineTView.SelectedImageIndex = 0;
+            this.offlineTView.Size = new System.Drawing.Size(257, 731);
             this.offlineTView.TabIndex = 6;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(112, 663);
+            this.label1.Location = new System.Drawing.Point(99, 770);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(59, 13);
             this.label1.TabIndex = 7;
@@ -135,7 +152,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(374, 663);
+            this.label2.Location = new System.Drawing.Point(361, 770);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(39, 13);
             this.label2.TabIndex = 7;
@@ -143,11 +160,11 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(533, 132);
+            this.button1.Location = new System.Drawing.Point(533, 744);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 8;
-            this.button1.Text = "button1";
+            this.button1.Text = "Expand";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -155,7 +172,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(619, 698);
+            this.ClientSize = new System.Drawing.Size(619, 792);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -192,6 +209,7 @@
         private System.Windows.Forms.TreeView offlineTView;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.Button button1;
     }
 }

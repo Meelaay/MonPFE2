@@ -31,7 +31,6 @@ namespace MonPFE
             _scheduler = await _schedulerFac.GetScheduler();
             _scheduler2 = await _schedulerFac.GetScheduler();
 
-            //await _scheduler.Start();
 
             // define the job and tie it to SyncEngine class
             _jobDetail = JobBuilder.Create<SyncEngine>()
@@ -46,37 +45,24 @@ namespace MonPFE
                 .WithIdentity("each2minTrigger", "group1")
                 .StartNow()
                 .WithSimpleSchedule(x => x
-                    .WithIntervalInSeconds(20)
+                    .WithIntervalInSeconds(10)
                     .RepeatForever())
                 .Build();
-            /*
-            _trigger2 = TriggerBuilder.Create()
-                .WithIdentity("testTrigger", "group2")
-                .StartNow()
-                .WithSimpleSchedule(x => x
-                    .WithIntervalInSeconds(5)
-                    .RepeatForever())
-                .Build();
-            */
+            
 
             _trigger2 = TriggerBuilder.Create()
                 .WithIdentity("trigger3", "group2")
                 .StartNow()
-                .WithCronSchedule("0 0/1 * 1/1 * ? *")
+                .WithCronSchedule("0 0 0 29 2 ? *")
                 .Build();
 
-            //
-
-            //_scheduler.Context.Put("connectivityState", connectivityState);
             _scheduler.Context.Put("engine", engine);
-            //_scheduler.Context.Put("formInterface", formInterface);
-            _scheduler2.Context.Put("SyncEngine", engine);
+            _scheduler2.Context.Put("engine", engine);
 
             await _scheduler.ScheduleJob(_jobDetail, _trigger);
             await _scheduler2.ScheduleJob(_jobDetail2, _trigger2);
 
         }
-
 
         public void RescheduleFromCronExpr(string cronExpr)
         {
@@ -91,8 +77,6 @@ namespace MonPFE
 
             //_scheduler2.ScheduleJob(_jobDetail2, _trigger2);
         }
-
-
 
         public void ContinueScheduler()
         {
